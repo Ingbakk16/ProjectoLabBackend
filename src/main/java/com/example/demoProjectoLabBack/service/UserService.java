@@ -1,6 +1,5 @@
 package com.example.demoProjectoLabBack.service;
 
-import com.example.demoProjectoLabBack.Util.JwtUtil;
 import com.example.demoProjectoLabBack.persistance.entities.User;
 import com.example.demoProjectoLabBack.persistance.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -17,9 +16,6 @@ public class UserService {
 
     @Autowired
     private PasswordEncoder passwordEncoder;
-
-    @Autowired
-    private JwtUtil jwtUtil;
 
     public User createUser(User user) {
         user.setPassword(passwordEncoder.encode(user.getPassword()));
@@ -42,11 +38,11 @@ public class UserService {
         userRepository.deleteById(id);
     }
 
-    public String loginUser(String username, String password) {
+    public boolean loginUser(String username, String password) {
         User user = userRepository.findByUsername(username);
-        if (user != null && passwordEncoder.matches(password, user.getPassword())) {
-            return jwtUtil.generateToken(user);
-        } else {
-            throw new RuntimeException("Invalid username or password");
+        if (user != null) {
+            return passwordEncoder.matches(password, user.getPassword());
         }
-}}
+        return false;
+    }
+}

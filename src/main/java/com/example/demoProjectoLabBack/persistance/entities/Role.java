@@ -1,6 +1,6 @@
 package com.example.demoProjectoLabBack.persistance.entities;
 
-import com.example.demoProjectoLabBack.enums.RoleName;
+import com.example.demoProjectoLabBack.model.enums.RoleName;
 import jakarta.persistence.*;
 
 @Entity

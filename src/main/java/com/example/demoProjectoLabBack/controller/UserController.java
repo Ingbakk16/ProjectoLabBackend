@@ -2,11 +2,14 @@ package com.example.demoProjectoLabBack.controller;
 
 
 
+import com.example.demoProjectoLabBack.model.dto.UserForRegistrationDto;
 import com.example.demoProjectoLabBack.persistance.entities.User;
 import com.example.demoProjectoLabBack.service.UserService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -21,15 +24,22 @@ public class UserController {
 
     @PostMapping("/register")
     @Operation(summary = "Register a new user")
-    public User registerUser(@RequestBody User user) {
+    public User registerUser(@Validated @RequestBody UserForRegistrationDto userForRegistrationDto) {
+        // Convert UserDTO to User
+        User user = new User();
+        user.setUsername(userForRegistrationDto.getUsername());
+        user.setName(userForRegistrationDto.getName());
+        user.setLastname(userForRegistrationDto.getLastname());
+        user.setEmail(userForRegistrationDto.getEmail());
+        user.setPassword(userForRegistrationDto.getPassword()); // Remember to encode the password
+
         return userService.createUser(user);
     }
 
-    @PostMapping("/login")
-    @Operation(summary = "Login a user and return a token")
-    public String loginUser(@RequestParam String username, @RequestParam String password) {
-        return userService.loginUser(username, password);
-    }
+
+
+
+
 
     @GetMapping("/{id}")
     @Operation(summary = "Get a user by ID")
@@ -53,5 +63,11 @@ public class UserController {
     @Operation(summary = "Delete a user by ID")
     public void deleteUser(@PathVariable Integer id) {
         userService.deleteUser(id);
+    }
+
+    @GetMapping("/dashboard")
+    public String dashboard() {
+        // For now, just return a simple message
+        return "Welcome to the Dashboard!";
     }
 }
