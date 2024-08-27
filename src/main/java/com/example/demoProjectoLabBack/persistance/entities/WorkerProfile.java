@@ -1,6 +1,8 @@
 package com.example.demoProjectoLabBack.persistance.entities;
 
 import jakarta.persistence.*;
+
+import java.util.HashSet;
 import java.util.Set;
 
 @Entity
@@ -29,11 +31,22 @@ public class WorkerProfile {
     @JoinColumn(name = "user_id", referencedColumnName = "id") // Specify column name explicitly
     private User user;
 
-    @OneToMany(mappedBy = "workerProfile", cascade = CascadeType.ALL)
-    private Set<Job> jobs;
+    @ManyToMany
+    @JoinTable(
+            name = "user_worker_profile",
+            joinColumns = @JoinColumn(name = "worker_profile_id"),
+            inverseJoinColumns = @JoinColumn(name = "job_id")
+    )
+    private Set<Job> jobs = new HashSet<>();
 
 
     // Getters and setters
+
+    public void addJob(Job job) {
+        this.jobs.add(job);
+        job.getWorkerProfiles().add(this);  // Ensure bidirectional relationship
+    }
+
     public Integer getId() {
         return id;
     }
@@ -83,4 +96,14 @@ public class WorkerProfile {
     public void setRating(int rating) {
         this.rating = rating;
     }
+
+    public Set<Job> getJobs() {
+        return jobs;
+    }
+
+    // Setter for jobs
+    public void setJobs(Set<Job> jobs) {
+        this.jobs = jobs;
+    }
+
 }

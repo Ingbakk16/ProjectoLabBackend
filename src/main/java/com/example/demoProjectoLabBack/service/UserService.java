@@ -1,9 +1,11 @@
 package com.example.demoProjectoLabBack.service;
 
+import com.example.demoProjectoLabBack.model.enums.RoleName;
+import com.example.demoProjectoLabBack.persistance.entities.Role;
 import com.example.demoProjectoLabBack.persistance.entities.User;
+import com.example.demoProjectoLabBack.persistance.repository.RoleRepository;
 import com.example.demoProjectoLabBack.persistance.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -15,10 +17,12 @@ public class UserService {
     private UserRepository userRepository;
 
     @Autowired
-    private PasswordEncoder passwordEncoder;
+    private RoleRepository roleRepository;
+
+
 
     public User createUser(User user) {
-        user.setPassword(passwordEncoder.encode(user.getPassword()));
+        user.setPassword(user.getPassword());
         return userRepository.save(user);
     }
 
@@ -30,19 +34,37 @@ public class UserService {
         return userRepository.findByUsername(username);
     }
 
-    public List<User> findAllUsers() {
-        return userRepository.findAll();
+    public List<User> findAllUsersWithUserRole() {
+        return userRepository.findAllByRoleName(RoleName.ROLE_USER);
+    }
+
+    public List<User> findAllUsersWithWorkerRole() {
+        return userRepository.findAllByRoleName(RoleName.ROLE_WORKER);
     }
 
     public void deleteUser(Integer id) {
         userRepository.deleteById(id);
     }
 
-    public boolean loginUser(String username, String password) {
-        User user = userRepository.findByUsername(username);
-        if (user != null) {
-            return passwordEncoder.matches(password, user.getPassword());
-        }
-        return false;
+    public User updateUser(User user) {
+        return userRepository.save(user);
     }
+
+    public void updateUserRole(Integer userId, RoleName roleName) {
+        // Load the user from the database
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new RuntimeException("User not found"));
+
+        // Load the role from the database
+
+        Role role = roleRepository.findByName(roleName)
+                .orElseThrow(() -> new RuntimeException("Role not found"));
+
+        // Set the new role for the user
+        user.setRole(role);
+
+        // Save the user to persist the role change
+        userRepository.save(user);
+    }
+
 }

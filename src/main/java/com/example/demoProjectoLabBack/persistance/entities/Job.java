@@ -2,6 +2,8 @@ package com.example.demoProjectoLabBack.persistance.entities;
 
 import jakarta.persistence.*;
 import java.util.Date;
+import java.util.HashSet;
+import java.util.Set;
 
 @Entity
 public class Job {
@@ -20,9 +22,17 @@ public class Job {
     private String skillsRequired;
 
 
-    @ManyToOne
-    @JoinColumn(name = "worker_profile_id", nullable = false)
-    private WorkerProfile workerProfile;
+    @ManyToMany(mappedBy = "jobs")
+    private Set<WorkerProfile> workerProfiles = new HashSet<>();
+
+    // Getter and setter for workerProfiles
+    public Set<WorkerProfile> getWorkerProfiles() {
+        return workerProfiles;
+    }
+
+    public void setWorkerProfiles(Set<WorkerProfile> workerProfiles) {
+        this.workerProfiles = workerProfiles;
+    }
 
     // Getters and setters
     public Integer getId() {
@@ -59,10 +69,11 @@ public class Job {
 
 
     public WorkerProfile getWorkerProfile() {
-        return workerProfile;
+        return (WorkerProfile) workerProfiles;
     }
 
-    public void setWorkerProfile(WorkerProfile workerProfile) {
-        this.workerProfile = workerProfile;
-    }
+
+
+
+
 }
