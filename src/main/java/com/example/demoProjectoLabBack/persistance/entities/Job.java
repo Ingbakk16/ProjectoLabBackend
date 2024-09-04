@@ -1,45 +1,32 @@
 package com.example.demoProjectoLabBack.persistance.entities;
 
 import jakarta.persistence.*;
+import org.springframework.data.mongodb.core.mapping.DBRef;
+import org.springframework.data.mongodb.core.mapping.Document;
+
 import java.util.Date;
 import java.util.HashSet;
 import java.util.Set;
 
-@Entity
+@Document(collection = "jobs")
 public class Job {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.SEQUENCE)
-    private Integer id;
+    private String id;
 
-    @Column(nullable = false)
     private String title;
-
-    @Column(length = 1000)
     private String description;
-
-    @Column
     private String skillsRequired;
 
-
-    @ManyToMany(mappedBy = "jobs")
+    @DBRef
     private Set<WorkerProfile> workerProfiles = new HashSet<>();
 
-    // Getter and setter for workerProfiles
-    public Set<WorkerProfile> getWorkerProfiles() {
-        return workerProfiles;
-    }
-
-    public void setWorkerProfiles(Set<WorkerProfile> workerProfiles) {
-        this.workerProfiles = workerProfiles;
-    }
-
     // Getters and setters
-    public Integer getId() {
+    public String getId() {
         return id;
     }
 
-    public void setId(Integer id) {
+    public void setId(String id) {
         this.id = id;
     }
 
@@ -67,13 +54,11 @@ public class Job {
         this.skillsRequired = skillsRequired;
     }
 
-
-    public WorkerProfile getWorkerProfile() {
-        return (WorkerProfile) workerProfiles;
+    public Set<WorkerProfile> getWorkerProfiles() {
+        return workerProfiles;
     }
 
-
-
-
-
+    public void setWorkerProfiles(Set<WorkerProfile> workerProfiles) {
+        this.workerProfiles = workerProfiles;
+    }
 }

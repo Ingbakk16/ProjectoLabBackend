@@ -9,8 +9,8 @@ public class WorkerProfileDto {
     private UserDto user;  // Include a nested DTO for the user
 
     // Constructor
-    public WorkerProfileDto(Integer id, String description, int dni, String direccion, int rating, UserDto user) {
-        this.id = id;
+    public WorkerProfileDto(String id, String description, int dni, String direccion, int rating, UserDto user) {
+        this.id = Integer.valueOf(id);
         this.description = description;
         this.dni = dni;
         this.direccion = direccion;

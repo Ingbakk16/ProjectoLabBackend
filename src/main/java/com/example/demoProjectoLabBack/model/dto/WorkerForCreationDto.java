@@ -1,7 +1,5 @@
 package com.example.demoProjectoLabBack.model.dto;
 
-import com.example.demoProjectoLabBack.persistance.entities.User;
-
 public class WorkerForCreationDto {
     private String description;
     private int dni;
@@ -51,8 +49,8 @@ public class WorkerForCreationDto {
         this.rating = rating;
     }
 
-    public Integer getJobId() {
-        return jobId;
+    public String getJobId() {
+        return String.valueOf(jobId);
     }
 
     public void setJobId(Integer jobId) {

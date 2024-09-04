@@ -1,82 +1,74 @@
 package com.example.demoProjectoLabBack.persistance.entities;
 
 import jakarta.persistence.*;
+import org.springframework.data.mongodb.core.mapping.DBRef;
+import org.springframework.data.mongodb.core.mapping.Document;
+
 import java.util.Set;
 import java.util.HashSet;
 
-@Entity
-@Table(name = "`user`")
+@Document(collection = "users")
 public class User {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.SEQUENCE)
-    private Integer id;
-    @Column
+    private String id;
+
     private String username;
-    @Column
     private String name;
-    @Column
-    private String lastname ;
-    @Column
+    private String lastname;
     private String email;
-    @Column
     private String password;
 
-
-    @ManyToOne(fetch = FetchType.EAGER)
-    @JoinColumn(name = "role_id", nullable = false)  // Creates a foreign key column "role_id"
+    @DBRef
     private Role role;
 
-
-
-
-
-
-    public Integer getId() {
+    // Getters and setters
+    public String getId() {
         return id;
     }
 
-    public void setId(Integer id) {
+    public void setId(String id) {
         this.id = id;
-    }
-
-    public void setUsername(String username) {
-        this.username = username;
     }
 
     public String getUsername() {
         return username;
     }
 
-    public void setPassword(String password) {
-        this.password = password;
+    public void setUsername(String username) {
+        this.username = username;
     }
 
-    public void setEmail(String email) {
-        this.email = email;
-    }
-
-    public void setLastname(String lastname) {this.lastname = lastname;
+    public String getName() {
+        return name;
     }
 
     public void setName(String name) {
         this.name = name;
     }
 
-    public String getPassword() {
-        return password;
+    public String getLastname() {
+        return lastname;
+    }
+
+    public void setLastname(String lastname) {
+        this.lastname = lastname;
     }
 
     public String getEmail() {
         return email;
     }
 
-    public String getLastname() {
-        return lastname;
+    public void setEmail(String email) {
+        this.email = email;
     }
 
-    public String getName() {
-        return name;
+    public String getPassword() {
+        return password;
+    }
+
+    public void setPassword(String password) {
+        this.password = password;
     }
 
     public Role getRole() {

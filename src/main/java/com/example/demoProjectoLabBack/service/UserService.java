@@ -27,7 +27,7 @@ public class UserService {
     }
 
     public User findUserById(Integer id) {
-        return userRepository.findById(id).orElse(null);
+        return userRepository.findById(String.valueOf(id)).orElse(null);
     }
 
     public User findUserByUsername(String username) {
@@ -43,7 +43,7 @@ public class UserService {
     }
 
     public void deleteUser(Integer id) {
-        userRepository.deleteById(id);
+        userRepository.deleteById(String.valueOf(id));
     }
 
     public User updateUser(User user) {
@@ -52,7 +52,7 @@ public class UserService {
 
     public void updateUserRole(Integer userId, RoleName roleName) {
         // Load the user from the database
-        User user = userRepository.findById(userId)
+        User user = userRepository.findById(String.valueOf(userId))
                 .orElseThrow(() -> new RuntimeException("User not found"));
 
         // Load the role from the database

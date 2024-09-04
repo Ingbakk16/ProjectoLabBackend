@@ -12,6 +12,8 @@ import com.example.demoProjectoLabBack.persistance.repository.WorkerRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.Set;
+
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -28,14 +30,14 @@ public class WorkerService {
     private UserRepository userRepository;
 
     public void updateUserToWorker(Integer userId, WorkerForCreationDto request) {
-        User user = userRepository.findById(userId)
+        User user = userRepository.findById(String.valueOf(userId))
                 .orElseThrow(() -> new RuntimeException("User not found"));
 
         WorkerProfile workerProfile = new WorkerProfile();
         workerProfile.setUser(user);
         workerProfile.setDescription(request.getDescription());
         workerProfile.setDni(request.getDni());
-        workerProfile.setDirection(request.getDireccion());
+        workerProfile.setDireccion(request.getDireccion());
         workerProfile.setRating(request.getRating());
 
         workerProfileRepository.save(workerProfile);
@@ -53,11 +55,11 @@ public class WorkerService {
     public List<WorkerProfile> getWorkersByJobTitle(String title) {
         List<Job> jobs = jobRepository.findByTitle(title);
         return jobs.stream()
-                .map(Job::getWorkerProfile)
+                .map(Job::getWorkerProfiles) // Get the Set<WorkerProfile> from each Job
+                .flatMap(Set::stream) // Flatten the stream of Sets into a stream of WorkerProfiles
                 .distinct() // Remove duplicates if a worker has multiple jobs with the same title
                 .collect(Collectors.toList());
     }
-
 
     public List<WorkerProfileDto> findAllWorkers() {
         List<WorkerProfile> workers = workerProfileRepository.findAll();

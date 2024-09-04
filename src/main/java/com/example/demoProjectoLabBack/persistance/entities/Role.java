@@ -2,24 +2,22 @@ package com.example.demoProjectoLabBack.persistance.entities;
 
 import com.example.demoProjectoLabBack.model.enums.RoleName;
 import jakarta.persistence.*;
+import org.springframework.data.mongodb.core.mapping.Document;
 
-@Entity
+@Document(collection = "roles")
 public class Role {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.SEQUENCE)
-    private Integer id;
+    private String id;
 
-    @Enumerated(EnumType.STRING)
-    @Column(unique = true)
     private RoleName name;
 
     // Getters and setters
-    public Integer getId() {
+    public String getId() {
         return id;
     }
 
-    public void setId(Integer id) {
+    public void setId(String id) {
         this.id = id;
     }
 

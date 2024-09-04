@@ -9,8 +9,8 @@ public class UserDto {
     private String email;
 
     // Constructor
-    public UserDto(Integer id, String username, String name, String lastname, String email) {
-        this.id = id;
+    public UserDto(String id, String username, String name, String lastname, String email) {
+        this.id = Integer.valueOf(id);
         this.username = username;
         this.name = name;
         this.lastname = lastname;
