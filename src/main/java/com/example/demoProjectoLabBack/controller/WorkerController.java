@@ -22,20 +22,22 @@ import java.util.List;
 public class WorkerController {
 
     @Autowired
-    private WorkerService workerProfileService;
+    private WorkerService workerService;
 
     @Autowired
     private UserService userService;
 
     @PutMapping("worker/{userId}")
     public ResponseEntity<String> updateUserToWorker(
-            @PathVariable Integer userId,
+            @PathVariable String userId,
             @RequestBody WorkerForCreationDto request) {
         try {
             // Create the worker profile
-            workerProfileService.updateUserToWorker(userId, request);
-            // Update the user role
+            workerService.updateUserToWorker(userId, request);
+
+            // Update the user role to ROLE_WORKER
             userService.updateUserRole(userId, RoleName.ROLE_WORKER);
+
             return ResponseEntity.ok("User updated to worker successfully");
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Error updating user");
@@ -46,17 +48,23 @@ public class WorkerController {
 
     @GetMapping("/by-job/{title}")
     public ResponseEntity<List<WorkerProfile>> getWorkersByJobTitle(@PathVariable String title) {
-        List<WorkerProfile> workers = workerProfileService.getWorkersByJobTitle(title);
+        List<WorkerProfile> workers = workerService.getWorkersByJobTitle(title);
         return ResponseEntity.ok(workers);
     }
 
 
     @GetMapping("all")
+    @Operation(summary = "Get all workersProfiles")
     public ResponseEntity<List<WorkerProfileDto>> getAllWorkers() {
-        List<WorkerProfileDto> workers = workerProfileService.findAllWorkers();
+        List<WorkerProfileDto> workers = workerService.findAllWorkers();
         return ResponseEntity.ok(workers);
     }
 
+    @GetMapping("/profile/{id}")
+    public ResponseEntity<WorkerProfileDto> getWorkerProfile(@PathVariable String id) {
+        WorkerProfileDto workerProfileDto = workerService.getWorkerProfileById(id);
+        return ResponseEntity.ok(workerProfileDto);
+    }
 
 
 }

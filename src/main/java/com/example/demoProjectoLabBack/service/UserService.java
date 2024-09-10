@@ -26,8 +26,8 @@ public class UserService {
         return userRepository.save(user);
     }
 
-    public User findUserById(Integer id) {
-        return userRepository.findById(String.valueOf(id)).orElse(null);
+    public User findUserById(String id) {
+        return userRepository.findById(id).orElse(null);
     }
 
     public User findUserByUsername(String username) {
@@ -35,14 +35,23 @@ public class UserService {
     }
 
     public List<User> findAllUsersWithUserRole() {
-        return userRepository.findAllByRoleName(RoleName.ROLE_USER);
+
+        Role userRole = roleRepository.findByName(RoleName.ROLE_USER)
+                .orElseThrow(() -> new RuntimeException("Role not found"));
+
+
+        return userRepository.findAllByRoleId(userRole.getId());
     }
 
     public List<User> findAllUsersWithWorkerRole() {
-        return userRepository.findAllByRoleName(RoleName.ROLE_WORKER);
+        Role userRole = roleRepository.findByName(RoleName.ROLE_WORKER)
+                .orElseThrow(() -> new RuntimeException("Role not found"));
+
+
+        return userRepository.findAllByRoleId(userRole.getId());
     }
 
-    public void deleteUser(Integer id) {
+    public void deleteUser(String id) {
         userRepository.deleteById(String.valueOf(id));
     }
 
@@ -50,20 +59,19 @@ public class UserService {
         return userRepository.save(user);
     }
 
-    public void updateUserRole(Integer userId, RoleName roleName) {
-        // Load the user from the database
-        User user = userRepository.findById(String.valueOf(userId))
+    public void updateUserRole(String userId, RoleName roleName) {
+        // Fetch the user by ID from MongoDB
+        User user = userRepository.findById(userId)
                 .orElseThrow(() -> new RuntimeException("User not found"));
 
-        // Load the role from the database
-
-        Role role = roleRepository.findByName(roleName)
-                .orElseThrow(() -> new RuntimeException("Role not found"));
+        // Fetch the role by its name (e.g., ROLE_WORKER)
+        Role newRole = roleRepository.findByName(roleName)
+                .orElseThrow(() -> new RuntimeException("Error: Role is not found."));
 
         // Set the new role for the user
-        user.setRole(role);
+        user.setRole(newRole);
 
-        // Save the user to persist the role change
+        // Save the updated user in MongoDB
         userRepository.save(user);
     }
 

@@ -2,7 +2,7 @@ package com.example.demoProjectoLabBack.model.dto;
 
 public class UserDto {
 
-    private Integer id;
+    private String id;
     private String username;
     private String name;
     private String lastname;
@@ -10,7 +10,7 @@ public class UserDto {
 
     // Constructor
     public UserDto(String id, String username, String name, String lastname, String email) {
-        this.id = Integer.valueOf(id);
+        this.id = id;
         this.username = username;
         this.name = name;
         this.lastname = lastname;

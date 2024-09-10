@@ -15,6 +15,5 @@ import java.util.List;
 public interface UserRepository extends MongoRepository<User, String> {
     User findByUsername(String username);
 
-    @Query("{'role.name': ?0}")
-    List<User> findAllByRoleName(RoleName roleName);
+    List<User> findAllByRoleId(String roleId);
 }

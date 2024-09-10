@@ -2,6 +2,8 @@ package com.example.demoProjectoLabBack.controller;
 
 
 
+import ch.qos.logback.classic.encoder.JsonEncoder;
+import com.example.demoProjectoLabBack.config.SecurityConfig;
 import com.example.demoProjectoLabBack.model.dto.UserForEditDto;
 import com.example.demoProjectoLabBack.model.dto.UserForRegistrationDto;
 import com.example.demoProjectoLabBack.model.enums.RoleName;
@@ -12,6 +14,7 @@ import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import  com.example.demoProjectoLabBack.persistance.repository.RoleRepository;
@@ -29,6 +32,11 @@ public class UserController {
     @Autowired
     private RoleRepository roleRepository;
 
+    @Autowired
+    private PasswordEncoder passwordEncoder;
+
+
+
     @PostMapping("/register")
     @Operation(summary = "Register a new user")
     public User registerUser(@Validated @RequestBody UserForRegistrationDto userForRegistrationDto) {
@@ -38,17 +46,19 @@ public class UserController {
         user.setName(userForRegistrationDto.getName());
         user.setLastname(userForRegistrationDto.getLastname());
         user.setEmail(userForRegistrationDto.getEmail());
-        user.setPassword(userForRegistrationDto.getPassword());// Remember to encode the password
 
+        // Encode the password before saving
+        String encodedPassword = passwordEncoder.encode(userForRegistrationDto.getPassword());
+        user.setPassword(encodedPassword);
 
-        // Fetch the default role ROLE_USER
+        // Fetch the default role ROLE_USER from MongoDB
         Role defaultRole = roleRepository.findByName(RoleName.ROLE_USER)
                 .orElseThrow(() -> new RuntimeException("Error: Role is not found."));
 
-        // Assign default role to the user (now it's a single role, not a set)
+        // Assign default role to the user (MongoDB handles this normally)
         user.setRole(defaultRole);
 
-
+        // Save the user in MongoDB
         return userService.createUser(user);
     }
 
@@ -59,7 +69,7 @@ public class UserController {
 
     @GetMapping("/{id}")
     @Operation(summary = "Get a user by ID")
-    public User getUserById(@PathVariable Integer id) {
+    public User getUserById(@PathVariable String id) {
         return userService.findUserById(id);
     }
 
@@ -68,6 +78,7 @@ public class UserController {
     public User getUserByUsername(@PathVariable String username) {
         return userService.findUserByUsername(username);
     }
+
 
     @GetMapping("/all")
     @Operation(summary = "Get all users")
@@ -83,13 +94,13 @@ public class UserController {
 
     @DeleteMapping("/{id}")
     @Operation(summary = "Delete a user by ID")
-    public void deleteUser(@PathVariable Integer id) {
+    public void deleteUser(@PathVariable String id) {
         userService.deleteUser(id);
     }
 
     @PutMapping("/edit/{id}")
     public ResponseEntity<User> editUser(
-            @PathVariable Integer id,
+            @PathVariable String id,
             @Validated @RequestBody UserForEditDto userForEditDto) {
 
         // Find the existing user by ID

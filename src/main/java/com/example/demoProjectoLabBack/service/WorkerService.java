@@ -9,9 +9,12 @@ import com.example.demoProjectoLabBack.persistance.entities.WorkerProfile;
 import com.example.demoProjectoLabBack.persistance.repository.JobRepository;
 import com.example.demoProjectoLabBack.persistance.repository.UserRepository;
 import com.example.demoProjectoLabBack.persistance.repository.WorkerRepository;
+import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.Collections;
+import java.util.Objects;
 import java.util.Set;
 
 import java.util.List;
@@ -21,7 +24,7 @@ import java.util.stream.Collectors;
 public class WorkerService {
 
     @Autowired
-    private WorkerRepository workerProfileRepository;
+    private WorkerRepository workerRepository;
 
     @Autowired
     private JobRepository jobRepository;
@@ -29,10 +32,13 @@ public class WorkerService {
     @Autowired
     private UserRepository userRepository;
 
-    public void updateUserToWorker(Integer userId, WorkerForCreationDto request) {
-        User user = userRepository.findById(String.valueOf(userId))
+    @Transactional
+    public void updateUserToWorker(String userId, WorkerForCreationDto request) {
+        // Fetch the user by ID from MongoDB
+        User user = userRepository.findById(userId)
                 .orElseThrow(() -> new RuntimeException("User not found"));
 
+        // Create or update the WorkerProfile for the user
         WorkerProfile workerProfile = new WorkerProfile();
         workerProfile.setUser(user);
         workerProfile.setDescription(request.getDescription());
@@ -40,39 +46,73 @@ public class WorkerService {
         workerProfile.setDireccion(request.getDireccion());
         workerProfile.setRating(request.getRating());
 
-        workerProfileRepository.save(workerProfile);
+
 
         Job job = jobRepository.findById(request.getJobId())
                 .orElseThrow(() -> new RuntimeException("Job not found"));
 
-        workerProfile.addJob(job);
+        workerProfile.addJob(job);  // Add the job to workerProfile
 
-        // Save the updated WorkerProfile and Job
-        workerProfileRepository.save(workerProfile);
+        // Save the updated WorkerProfile and Job association
+        workerRepository.save(workerProfile);
     }
 
 
     public List<WorkerProfile> getWorkersByJobTitle(String title) {
         List<Job> jobs = jobRepository.findByTitle(title);
+        if (jobs.isEmpty()) {
+            return Collections.emptyList(); // Return an empty list if no jobs found
+        }
         return jobs.stream()
-                .map(Job::getWorkerProfiles) // Get the Set<WorkerProfile> from each Job
-                .flatMap(Set::stream) // Flatten the stream of Sets into a stream of WorkerProfiles
-                .distinct() // Remove duplicates if a worker has multiple jobs with the same title
+                .map(Job::getWorkerProfiles)
+                .flatMap(Set::stream)
+                .distinct()
                 .collect(Collectors.toList());
     }
 
     public List<WorkerProfileDto> findAllWorkers() {
-        List<WorkerProfile> workers = workerProfileRepository.findAll();
+        List<WorkerProfile> workers = workerRepository.findAll();
+        if (workers == null || workers.isEmpty()) {
+            // Log or handle the case where no workers are found
+            return Collections.emptyList();
+        }
         return workers.stream()
                 .map(this::convertToDto)
                 .collect(Collectors.toList());
     }
 
+
+
+    public WorkerProfileDto getWorkerProfileById(String id) {
+        WorkerProfile workerProfile = workerRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Worker not found with ID: " + id));
+        return convertToDto(workerProfile);
+    }
+
+
+
+
     private WorkerProfileDto convertToDto(WorkerProfile workerProfile) {
+        if (workerProfile == null) {
+            return null; // or throw an exception
+        }
+
         User user = workerProfile.getUser();
-        UserDto userDto = new UserDto(user.getId(), user.getUsername(), user.getName(), user.getLastname(), user.getEmail());
-        return new WorkerProfileDto(workerProfile.getId(), workerProfile.getDescription(), workerProfile.getDni(),
-                workerProfile.getDireccion(), workerProfile.getRating(), userDto);
+        UserDto userDto = (user != null) ? new UserDto(user.getId(), user.getUsername(), user.getName(), user.getLastname(), user.getEmail()) : null;
+
+        List<String> jobTitles = workerProfile.getJobs() != null ?
+                workerProfile.getJobs().stream()
+                        .filter(Objects::nonNull) // Ensure Job is not null
+                        .map(Job::getTitle)
+                        .collect(Collectors.toList()) : Collections.emptyList();
+
+        return new WorkerProfileDto(workerProfile.getId(),
+                workerProfile.getDescription(),
+                workerProfile.getDni(),
+                workerProfile.getDireccion(),
+                workerProfile.getRating(),
+                userDto,
+                jobTitles);
     }
 
 

@@ -5,7 +5,7 @@ public class WorkerForCreationDto {
     private int dni;
     private String direccion;
     private int rating;
-    private Integer jobId;
+    private String jobId;
 
 
     // Getters and setters
@@ -53,7 +53,7 @@ public class WorkerForCreationDto {
         return String.valueOf(jobId);
     }
 
-    public void setJobId(Integer jobId) {
+    public void setJobId(String jobId) {
         this.jobId = jobId;
     }
 
