@@ -40,6 +40,11 @@ public class UserController {
     @PostMapping("/register")
     @Operation(summary = "Register a new user")
     public User registerUser(@Validated @RequestBody UserForRegistrationDto userForRegistrationDto) {
+        // Check if the username is already taken
+        if (userService.isUsernameTaken(userForRegistrationDto.getUsername())) {
+            throw new RuntimeException("Error: Username is already taken!");
+        }
+
         // Convert UserDTO to User
         User user = new User();
         user.setUsername(userForRegistrationDto.getUsername());
@@ -55,7 +60,7 @@ public class UserController {
         Role defaultRole = roleRepository.findByName(RoleName.ROLE_USER)
                 .orElseThrow(() -> new RuntimeException("Error: Role is not found."));
 
-        // Assign default role to the user (MongoDB handles this normally)
+        // Assign default role to the user
         user.setRole(defaultRole);
 
         // Save the user in MongoDB
@@ -73,11 +78,7 @@ public class UserController {
         return userService.findUserById(id);
     }
 
-    @GetMapping("/username/{username}")
-    @Operation(summary = "Get a user by username")
-    public User getUserByUsername(@PathVariable String username) {
-        return userService.findUserByUsername(username);
-    }
+
 
 
     @GetMapping("/all")

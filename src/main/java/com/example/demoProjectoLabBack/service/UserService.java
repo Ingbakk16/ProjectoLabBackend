@@ -30,8 +30,10 @@ public class UserService {
         return userRepository.findById(id).orElse(null);
     }
 
-    public User findUserByUsername(String username) {
-        return userRepository.findByUsername(username);
+
+
+    public boolean isUsernameTaken(String username) {
+        return userRepository.findByUsername(username).isPresent();
     }
 
     public List<User> findAllUsersWithUserRole() {
