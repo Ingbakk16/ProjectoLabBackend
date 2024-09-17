@@ -1,6 +1,9 @@
 package com.example.demoProjectoLabBack.controller;
 
 
+import com.example.demoProjectoLabBack.Util.JwtUserDetails;
+import com.example.demoProjectoLabBack.config.SecurityConfig;
+import com.example.demoProjectoLabBack.filter.JwtAuthenticationFilter;
 import com.example.demoProjectoLabBack.model.dto.WorkerForCreationDto;
 import com.example.demoProjectoLabBack.model.dto.WorkerProfileDto;
 import com.example.demoProjectoLabBack.model.enums.RoleName;
@@ -12,6 +15,8 @@ import io.swagger.v3.oas.annotations.Operation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 
 
@@ -27,11 +32,17 @@ public class WorkerController {
     @Autowired
     private UserService userService;
 
-    @PutMapping("worker/{userId}")
+    @Autowired
+    private SecurityConfig securityConfig;
+
+    @PutMapping("worker")
     public ResponseEntity<String> updateUserToWorker(
-            @PathVariable String userId,
-            @RequestBody WorkerForCreationDto request) {
+            @RequestBody WorkerForCreationDto request,
+            @AuthenticationPrincipal JwtUserDetails jwtUserDetails) {
         try {
+            // Extract userId from the token
+            String userId = jwtUserDetails.getId();
+
             // Create the worker profile
             workerService.updateUserToWorker(userId, request);
 
@@ -60,9 +71,17 @@ public class WorkerController {
         return ResponseEntity.ok(workers);
     }
 
-    @GetMapping("/profile/{id}")
-    public ResponseEntity<WorkerProfileDto> getWorkerProfile(@PathVariable String id) {
-        WorkerProfileDto workerProfileDto = workerService.getWorkerProfileById(id);
+    @GetMapping("/profile")
+    public ResponseEntity<WorkerProfileDto> getWorkerProfile() {
+        // Extract the authenticated user's details from the SecurityContextHolder
+        JwtUserDetails userDetails = (JwtUserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+
+        // Extract the user ID from the token claims (or the principal)
+        String userId = userDetails.getId(); // Assuming JwtUserDetails has a getId() method
+
+        // Fetch the worker profile using the extracted userId
+        WorkerProfileDto workerProfileDto = workerService.getWorkerProfileById(userId);
+
         return ResponseEntity.ok(workerProfileDto);
     }
 
