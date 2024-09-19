@@ -4,7 +4,9 @@ import jakarta.persistence.*;
 import org.springframework.data.mongodb.core.mapping.DBRef;
 import org.springframework.data.mongodb.core.mapping.Document;
 
+import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 @Document(collection = "workerProfiles")
@@ -16,13 +18,16 @@ public class WorkerProfile {
     private String description;
     private int dni;
     private String direccion;
-    private int rating;
+    private double rating = 0.0;
 
     @DBRef
     private User user;
 
     @DBRef
     private Set<Job> jobs = new HashSet<>();
+
+    private List<Integer> ratings = new ArrayList<>();
+
 
     // Getters and setters
     public String getId() {
@@ -57,11 +62,11 @@ public class WorkerProfile {
         this.direccion = direccion;
     }
 
-    public int getRating() {
+    public double getRating() {
         return rating;
     }
 
-    public void setRating(int rating) {
+    public void setRating(double rating) {
         this.rating = rating;
     }
 
@@ -85,4 +90,17 @@ public class WorkerProfile {
         this.jobs.add(job);
         job.getWorkerProfiles().add(this);  // Ensure bidirectional relationship
     }
+
+    public void addRating(int rating) {
+        this.ratings.add(rating);
+        calculateAverageRating();
+    }
+
+    // Method to calculate the average rating
+    private void calculateAverageRating() {
+        if (!ratings.isEmpty()) {
+            this.rating = ratings.stream().mapToInt(Integer::intValue).average().orElse(0.0);
+        }
+    }
+
 }

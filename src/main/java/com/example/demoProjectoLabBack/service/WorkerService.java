@@ -13,11 +13,8 @@ import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.Collections;
-import java.util.Objects;
-import java.util.Set;
+import java.util.*;
 
-import java.util.List;
 import java.util.stream.Collectors;
 
 @Service
@@ -113,6 +110,19 @@ public class WorkerService {
                 workerProfile.getRating(),
                 userDto,
                 jobTitles);
+    }
+
+
+    public void rateWorker(String workerId, int rating) {
+        Optional<WorkerProfile> workerProfileOptional = workerRepository.findById(workerId);
+
+        if (workerProfileOptional.isPresent()) {
+            WorkerProfile workerProfile = workerProfileOptional.get();
+            workerProfile.addRating(rating); // Add rating and recalculate average
+            workerRepository.save(workerProfile); // Save the updated profile
+        } else {
+            throw new RuntimeException("Worker not found");
+        }
     }
 
 

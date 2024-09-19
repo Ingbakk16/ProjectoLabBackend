@@ -85,5 +85,15 @@ public class WorkerController {
         return ResponseEntity.ok(workerProfileDto);
     }
 
+    @PostMapping("/{workerId}/rate")
+    public ResponseEntity<String> rateWorker(@PathVariable String workerId, @RequestParam int rating) {
+        try {
+            workerService.rateWorker(workerId, rating);
+            return ResponseEntity.ok("Rating added successfully");
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Error adding rating");
+        }
+    }
+
 
 }

@@ -9,7 +9,7 @@ public class JwtTokenUtil {
     public String extractUserId(String token) {
         return Jwts.parser()
                 .setSigningKey(secretKey)
-                .parseClaimsJws(token)
+                    .parseClaimsJws(token)
                 .getBody()
                 .getSubject(); // Assumes userId is in the subject
     }
