@@ -4,6 +4,7 @@ import com.example.demoProjectoLabBack.persistance.entities.Role;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
+
 import java.util.Collection;
 import java.util.Collections;
 
@@ -18,7 +19,8 @@ public class JwtUserDetails implements UserDetails {
     private Role role;
 
     // Constructor
-    public JwtUserDetails(String id, String username, String password, String name, String lastname, String email, Role role) {
+    public JwtUserDetails(String id, String username, String password, String name,
+                          String lastname, String email, Role role) {
         this.id = id;
         this.username = username;
         this.password = password;
@@ -51,6 +53,11 @@ public class JwtUserDetails implements UserDetails {
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
+        // Check for null role to avoid NullPointerException
+        if (role == null || role.getName() == null) {
+            throw new IllegalStateException("User role is not set");
+        }
+
         // Convert the role into a SimpleGrantedAuthority for Spring Security
         return Collections.singletonList(new SimpleGrantedAuthority(role.getName().name()));
     }
@@ -67,21 +74,25 @@ public class JwtUserDetails implements UserDetails {
 
     @Override
     public boolean isAccountNonExpired() {
-        return true; // Customize based on your requirements
+        // Customize based on your requirements (e.g., add an expiration date field)
+        return true;
     }
 
     @Override
     public boolean isAccountNonLocked() {
-        return true; // Customize based on your requirements
+        // Customize based on your requirements (e.g., add a field for account lock status)
+        return true;
     }
 
     @Override
     public boolean isCredentialsNonExpired() {
-        return true; // Customize based on your requirements
+        // Customize based on your requirements (e.g., add password expiration logic)
+        return true;
     }
 
     @Override
     public boolean isEnabled() {
-        return true; // Customize based on your requirements
+        // Customize based on your requirements (e.g., add an "enabled" field)
+        return true;
     }
 }
