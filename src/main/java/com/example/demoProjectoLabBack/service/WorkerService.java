@@ -80,12 +80,13 @@ public class WorkerService {
 
 
 
-    public WorkerProfileDto getWorkerProfileById(String userId) {
-        WorkerProfile workerProfile = workerRepository.findById(userId)
-                .orElseThrow(() -> new RuntimeException("Worker not found with ID: " + userId));
+    public WorkerProfileDto getWorkerProfileByUserId(String userId) {
+        WorkerProfile workerProfile = workerRepository.findByUserId(userId)
+                .orElseThrow(() -> new RuntimeException("Worker profile not found for user ID: " + userId));
+
+        // Convert WorkerProfile to WorkerProfileDto (assuming you have a conversion method)
         return convertToDto(workerProfile);
     }
-
 
 
     private WorkerProfileDto convertToDto(WorkerProfile workerProfile) {

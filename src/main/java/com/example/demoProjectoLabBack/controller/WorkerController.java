@@ -78,7 +78,7 @@ public class WorkerController {
         String userId = jwtUserDetails.getId();
 
         // Fetch the worker profile using the extracted userId
-        WorkerProfileDto workerProfileDto = workerService.getWorkerProfileById(userId);
+        WorkerProfileDto workerProfileDto = workerService.getWorkerProfileByUserId(userId);
 
         return ResponseEntity.ok(workerProfileDto);
     }
