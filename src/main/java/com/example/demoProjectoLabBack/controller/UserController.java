@@ -3,6 +3,7 @@ package com.example.demoProjectoLabBack.controller;
 
 
 import ch.qos.logback.classic.encoder.JsonEncoder;
+import com.example.demoProjectoLabBack.Util.JwtUserDetails;
 import com.example.demoProjectoLabBack.config.SecurityConfig;
 import com.example.demoProjectoLabBack.model.dto.UserForEditDto;
 import com.example.demoProjectoLabBack.model.dto.UserForRegistrationDto;
@@ -14,6 +15,7 @@ import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
@@ -72,10 +74,14 @@ public class UserController {
 
 
 
-    @GetMapping("/{id}")
-    @Operation(summary = "Get a user by ID")
-    public User getUserById(@PathVariable String id) {
-        return userService.findUserById(id);
+    @GetMapping("/profile")
+    @Operation(summary = "Get the authenticated user's profile")
+    public User getUserProfile(@AuthenticationPrincipal JwtUserDetails jwtUserDetails) {
+        // Extract the userId from the JwtUserDetails (which holds the token claims)
+        String userId = jwtUserDetails.getId();
+
+        // Fetch the user by ID from the database
+        return userService.findUserById(userId);
     }
 
 

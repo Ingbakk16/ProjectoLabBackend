@@ -1,6 +1,8 @@
 package com.example.demoProjectoLabBack.config;
 
 
+import com.example.demoProjectoLabBack.persistance.entities.User;
+import com.example.demoProjectoLabBack.persistance.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.context.annotation.Bean;
@@ -11,11 +13,16 @@ import com.example.demoProjectoLabBack.persistance.entities.Role;
 import com.example.demoProjectoLabBack.persistance.repository.JobRepository;
 import com.example.demoProjectoLabBack.persistance.repository.RoleRepository;
 
+import java.util.Optional;
+
 @Configuration
 public class DataLoader {
 
     @Autowired
     private RoleRepository roleRepository;
+
+    @Autowired
+    private UserRepository userRepository;
 
     @Autowired
     private JobRepository jobRepository;
@@ -48,6 +55,29 @@ public class DataLoader {
                 electricianJob.setDescription("Handles all electrical tasks");
                 jobRepository.save(electricianJob);
             }
+
+
+            if (userRepository.count() == 0) { // Check if users exist
+                User adminUser = new User();
+                // Remove the manual ID setting to let the database generate it
+                adminUser.setUsername("oso");
+                adminUser.setName("walter");
+                adminUser.setLastname("hermann");
+                adminUser.setEmail("pepito@gmail.com");
+                adminUser.setPassword("HolaHol553"); // Remember to hash this in production
+
+                // Get the ADMIN role from the repository
+                Optional<Role> adminRoleOptional = roleRepository.findByName(RoleName.ROLE_ADMIN);
+                if (adminRoleOptional.isPresent()) {
+                    adminUser.setRole(adminRoleOptional.get()); // Set the role if present
+                } else {
+                    // Handle the case where the role is not found (optional)
+                    throw new RuntimeException("Admin role not found");
+                }
+
+                userRepository.save(adminUser); // Save the user
+            }
+
         };
     }
 }

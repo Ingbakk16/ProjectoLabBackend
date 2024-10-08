@@ -72,12 +72,10 @@ public class WorkerController {
     }
 
     @GetMapping("/profile")
-    public ResponseEntity<WorkerProfileDto> getWorkerProfile() {
-        // Extract the authenticated user's details from the SecurityContextHolder
-        JwtUserDetails userDetails = (JwtUserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-
-        // Extract the user ID from the token claims (or the principal)
-        String userId = userDetails.getId(); // Assuming JwtUserDetails has a getId() method
+    @Operation(summary = "Get the authenticated user's worker profile")
+    public ResponseEntity<WorkerProfileDto> getWorkerProfile(@AuthenticationPrincipal JwtUserDetails jwtUserDetails) {
+        // Extract the userId from the JwtUserDetails (which holds the token claims)
+        String userId = jwtUserDetails.getId();
 
         // Fetch the worker profile using the extracted userId
         WorkerProfileDto workerProfileDto = workerService.getWorkerProfileById(userId);

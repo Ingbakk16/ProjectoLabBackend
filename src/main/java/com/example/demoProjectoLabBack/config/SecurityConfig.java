@@ -44,7 +44,7 @@ public class SecurityConfig {
                         authorizeRequests
                                 .requestMatchers("/public/**", "/api/users/register", "/api/auth/login").permitAll()  // Allow public access to specific endpoints
                                 .requestMatchers("/api/admin/**").hasRole("ADMIN") // Only ADMIN role can access this
-                                .requestMatchers("/api/workers/**").hasRole("WORKER")
+
                                 .anyRequest().authenticated()  // All other requests require authentication
                 )
                 .authenticationManager(authenticationManager)  // Set the authenticationManager

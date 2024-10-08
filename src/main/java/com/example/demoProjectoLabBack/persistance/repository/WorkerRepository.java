@@ -12,6 +12,6 @@ import java.util.Optional;
 @Repository
 public interface WorkerRepository extends MongoRepository<WorkerProfile, String> {
     // Additional query methods (if needed) can be defined here
-    Optional<WorkerProfile> findById(String id);
+    Optional<WorkerProfile> findById(String userId);
 
 }
