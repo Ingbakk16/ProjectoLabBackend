@@ -6,6 +6,7 @@ import com.example.demoProjectoLabBack.config.SecurityConfig;
 import com.example.demoProjectoLabBack.filter.JwtAuthenticationFilter;
 import com.example.demoProjectoLabBack.model.dto.WorkerForCreationDto;
 import com.example.demoProjectoLabBack.model.dto.WorkerProfileDto;
+import com.example.demoProjectoLabBack.model.dto.WorkerProfileForEditDto;
 import com.example.demoProjectoLabBack.model.enums.RoleName;
 import com.example.demoProjectoLabBack.persistance.entities.User;
 import com.example.demoProjectoLabBack.persistance.entities.WorkerProfile;
@@ -82,6 +83,25 @@ public class WorkerController {
 
         return ResponseEntity.ok(workerProfileDto);
     }
+
+
+
+    @PutMapping("/edit_profile")
+    @Operation(summary = "Update the authenticated user's worker profile")
+    public ResponseEntity<WorkerProfileDto> updateWorkerProfile(
+            @AuthenticationPrincipal JwtUserDetails jwtUserDetails,
+            @RequestBody WorkerProfileForEditDto updateData) {
+
+        // Extract userId from token
+        String userId = jwtUserDetails.getId();
+
+        // Call the service to update the worker profile
+        WorkerProfileDto updatedProfile = workerService.updateWorkerProfile(userId, updateData);
+
+        return ResponseEntity.ok(updatedProfile);
+    }
+
+
 
     @PostMapping("/{workerId}/rate")
     public ResponseEntity<String> rateWorker(@PathVariable String workerId, @RequestParam int rating) {

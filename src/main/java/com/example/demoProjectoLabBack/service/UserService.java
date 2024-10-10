@@ -1,8 +1,11 @@
 package com.example.demoProjectoLabBack.service;
 
+import com.example.demoProjectoLabBack.model.dto.UserDto;
+import com.example.demoProjectoLabBack.model.dto.UserForEditDto;
 import com.example.demoProjectoLabBack.model.enums.RoleName;
 import com.example.demoProjectoLabBack.persistance.entities.Role;
 import com.example.demoProjectoLabBack.persistance.entities.User;
+import com.example.demoProjectoLabBack.persistance.entities.WorkerProfile;
 import com.example.demoProjectoLabBack.persistance.repository.RoleRepository;
 import com.example.demoProjectoLabBack.persistance.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -64,9 +67,27 @@ public class UserService {
         userRepository.deleteById(String.valueOf(id));
     }
 
-    public User updateUser(User user) {
-        return userRepository.save(user);
+    public UserDto updateUserProfile(String userId, UserDto updateData) {
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new RuntimeException("User not found with ID: " + userId));
+
+        // Update fields from updateData
+        user.setName(updateData.getName());
+        user.setLastname(updateData.getLastname());
+        user.setEmail(updateData.getEmail());
+        // Add any other fields you want to update
+
+        // Save the updated user
+        User updatedUser = userRepository.save(user);
+
+        return convertToDto(updatedUser);  // Return updated user DTO
     }
+
+    // Convert User entity to UserDto
+    private UserDto convertToDto(User user) {
+        return new UserDto(user.getId(), user.getUsername(), user.getName(), user.getLastname(), user.getEmail());
+    }
+
 
     public void updateUserRole(String userId, RoleName roleName) {
         // Fetch the user by ID from MongoDB

@@ -5,6 +5,7 @@ package com.example.demoProjectoLabBack.controller;
 import ch.qos.logback.classic.encoder.JsonEncoder;
 import com.example.demoProjectoLabBack.Util.JwtUserDetails;
 import com.example.demoProjectoLabBack.config.SecurityConfig;
+import com.example.demoProjectoLabBack.model.dto.UserDto;
 import com.example.demoProjectoLabBack.model.dto.UserForEditDto;
 import com.example.demoProjectoLabBack.model.dto.UserForRegistrationDto;
 import com.example.demoProjectoLabBack.model.enums.RoleName;
@@ -105,24 +106,16 @@ public class UserController {
         userService.deleteUser(id);
     }
 
-    @PutMapping("/edit/{id}")
-    public ResponseEntity<User> editUser(
-            @PathVariable String id,
-            @Validated @RequestBody UserForEditDto userForEditDto) {
+    @PutMapping("/edit")
+    public ResponseEntity<UserDto> editUserProfile(
+            @AuthenticationPrincipal JwtUserDetails jwtUserDetails,
+            @RequestBody UserDto updateData) {
 
-        // Find the existing user by ID
-        User existingUser = userService.findUserById(id);
-        if (existingUser == null) {
-            return ResponseEntity.notFound().build();
-        }
+        // Extract userId from token
+        String userId = jwtUserDetails.getId();
 
-        // Update user fields using the userForEditDto object
-        existingUser.setUsername(userForEditDto.getUsername());
-        existingUser.setName(userForEditDto.getName());
-        existingUser.setLastname(userForEditDto.getLastname());
-
-        // Save the updated user
-        User updatedUser = userService.updateUser(existingUser);
+        // Call the service to update the user profile
+        UserDto updatedUser = userService.updateUserProfile(userId, updateData);
 
         return ResponseEntity.ok(updatedUser);
     }

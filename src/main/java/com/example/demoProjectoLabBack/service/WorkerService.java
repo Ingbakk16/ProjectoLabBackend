@@ -3,6 +3,7 @@ package com.example.demoProjectoLabBack.service;
 import com.example.demoProjectoLabBack.model.dto.UserDto;
 import com.example.demoProjectoLabBack.model.dto.WorkerForCreationDto;
 import com.example.demoProjectoLabBack.model.dto.WorkerProfileDto;
+import com.example.demoProjectoLabBack.model.dto.WorkerProfileForEditDto;
 import com.example.demoProjectoLabBack.persistance.entities.Job;
 import com.example.demoProjectoLabBack.persistance.entities.User;
 import com.example.demoProjectoLabBack.persistance.entities.WorkerProfile;
@@ -124,6 +125,26 @@ public class WorkerService {
             throw new RuntimeException("Worker not found");
         }
     }
+
+
+
+    public WorkerProfileDto updateWorkerProfile(String userId, WorkerProfileForEditDto updateData) {
+        WorkerProfile workerProfile = workerRepository.findByUserId(userId)
+                .orElseThrow(() -> new RuntimeException("Worker profile not found for user ID: " + userId));
+
+        // Update fields of the WorkerProfile from updateData
+        workerProfile.setDescription(updateData.getDescription());
+        workerProfile.setDni(updateData.getDni());
+        workerProfile.setDireccion(updateData.getDireccion());
+
+
+        // Save updated WorkerProfile
+        WorkerProfile updatedProfile = workerRepository.save(workerProfile);
+
+        return convertToDto(updatedProfile);  // Return updated DTO
+    }
+
+
 
 
 }
