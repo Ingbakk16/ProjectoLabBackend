@@ -36,4 +36,27 @@ public class JobService {
                 job.getSkillsRequired()
         );
     }
+
+
+    public Job createJob(JobDto jobDto) {
+        Job job = new Job();
+        job.setTitle(jobDto.getTitle());
+        job.setDescription(jobDto.getDescription());
+        job.setSkillsRequired(jobDto.getSkillsRequired());
+        return jobRepository.save(job);  // Save to MongoDB
+    }
+
+    // Method to delete a job by ID
+    public void deleteJob(String jobId) {
+        if (!jobRepository.existsById(jobId)) {
+            throw new RuntimeException("Job not found with ID: " + jobId);
+        }
+        jobRepository.deleteById(jobId);  // Delete the job by ID
+    }
+
+
+
+
+
+
 }

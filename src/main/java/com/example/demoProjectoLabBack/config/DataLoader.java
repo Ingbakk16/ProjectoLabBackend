@@ -12,6 +12,7 @@ import com.example.demoProjectoLabBack.persistance.entities.Job;
 import com.example.demoProjectoLabBack.persistance.entities.Role;
 import com.example.demoProjectoLabBack.persistance.repository.JobRepository;
 import com.example.demoProjectoLabBack.persistance.repository.RoleRepository;
+import org.springframework.security.crypto.password.PasswordEncoder;
 
 import java.util.Optional;
 
@@ -23,6 +24,9 @@ public class DataLoader {
 
     @Autowired
     private UserRepository userRepository;
+
+    @Autowired
+    private PasswordEncoder passwordEncoder;
 
     @Autowired
     private JobRepository jobRepository;
@@ -54,24 +58,28 @@ public class DataLoader {
                 electricianJob.setTitle("Electrician");
                 electricianJob.setDescription("Handles all electrical tasks");
                 jobRepository.save(electricianJob);
+
+                Job plumberJob = new Job();
+                electricianJob.setTitle("Plumber");
+                electricianJob.setDescription("Handles all plumbing tasks");
+                jobRepository.save(electricianJob);
             }
 
 
             if (userRepository.count() == 0) { // Check if users exist
                 User adminUser = new User();
-                // Remove the manual ID setting to let the database generate it
-                adminUser.setUsername("oso");
-                adminUser.setName("walter");
+                adminUser.setUsername("admin");
+                adminUser.setName("admin");
                 adminUser.setLastname("hermann");
                 adminUser.setEmail("pepito@gmail.com");
-                adminUser.setPassword("HolaHol553"); // Remember to hash this in production
+                adminUser.setPassword(passwordEncoder.encode("adminadmin")); // Hash the password
 
                 // Get the ADMIN role from the repository
                 Optional<Role> adminRoleOptional = roleRepository.findByName(RoleName.ROLE_ADMIN);
                 if (adminRoleOptional.isPresent()) {
                     adminUser.setRole(adminRoleOptional.get()); // Set the role if present
                 } else {
-                    // Handle the case where the role is not found (optional)
+                    // Handle the case where the role is not found
                     throw new RuntimeException("Admin role not found");
                 }
 

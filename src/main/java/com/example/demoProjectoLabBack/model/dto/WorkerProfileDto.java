@@ -8,16 +8,18 @@ public class WorkerProfileDto {
     private int dni;
     private String direccion;
     private double rating;
+    private String imageUrl;
     private UserDto user;
     private List<String> jobTitles;
 
     // Constructor
-    public WorkerProfileDto(String id, String description, int dni, String direccion, double rating, UserDto user, List<String> jobTitles) {
+    public WorkerProfileDto(String id, String description, int dni, String direccion, double rating, String imageUrl, UserDto user, List<String> jobTitles) {
         this.id = id;
         this.description = description;
         this.dni = dni;
         this.direccion = direccion;
         this.rating = rating;
+        this.imageUrl = imageUrl;
         this.user = user;
         this.jobTitles = jobTitles;
     }
@@ -37,4 +39,6 @@ public class WorkerProfileDto {
     public void setUser(UserDto user) { this.user = user; }
     public List<String> getJobTitles() { return jobTitles; }
     public void setJobTitles(List<String> jobTitles) { this.jobTitles = jobTitles; }
+    public String getImageUrl() { return imageUrl; }
+    public void setImageUrl(String imageUrl) { this.imageUrl = imageUrl; }
 }

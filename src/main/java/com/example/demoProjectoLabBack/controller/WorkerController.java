@@ -4,6 +4,7 @@ package com.example.demoProjectoLabBack.controller;
 import com.example.demoProjectoLabBack.Util.JwtUserDetails;
 import com.example.demoProjectoLabBack.config.SecurityConfig;
 import com.example.demoProjectoLabBack.filter.JwtAuthenticationFilter;
+import com.example.demoProjectoLabBack.model.dto.RatingDto;
 import com.example.demoProjectoLabBack.model.dto.WorkerForCreationDto;
 import com.example.demoProjectoLabBack.model.dto.WorkerProfileDto;
 import com.example.demoProjectoLabBack.model.dto.WorkerProfileForEditDto;
@@ -104,9 +105,20 @@ public class WorkerController {
 
 
     @PostMapping("/{workerId}/rate")
-    public ResponseEntity<String> rateWorker(@PathVariable String workerId, @RequestParam int rating) {
+    public ResponseEntity<String> rateWorker(
+            @PathVariable String workerId,
+            @RequestBody RatingDto ratingDto,
+            @AuthenticationPrincipal JwtUserDetails jwtUserDetails) {
+
+
         try {
-            workerService.rateWorker(workerId, rating);
+            int rating = ratingDto.getRating();
+            String comment = ratingDto.getComment();
+            String userId = jwtUserDetails.getId(); // user who rated
+
+            // Call the service to handle rating logic
+            workerService.rateWorker(workerId, ratingDto, userId);
+
             return ResponseEntity.ok("Rating added successfully");
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Error adding rating");

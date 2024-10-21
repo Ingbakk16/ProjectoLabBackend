@@ -24,5 +24,24 @@ import java.util.List;
 public class AdminController {
 
 
+    @Autowired
+    private JobService jobService;  // Assuming JobService is where the business logic resides
+
+    // Endpoint to create a new job
+    @PostMapping("/jobs")
+    public ResponseEntity<Job> createJob(@RequestBody JobDto jobDto) {
+        Job createdJob = jobService.createJob(jobDto);  // Converts JobDto to Job and saves it
+        return ResponseEntity.status(HttpStatus.CREATED).body(createdJob);
+    }
+
+
+    @DeleteMapping("/jobs/{jobId}")
+    public ResponseEntity<String> deleteJob(@PathVariable String jobId) {
+        jobService.deleteJob(jobId);
+        return ResponseEntity.ok("Job deleted successfully");
+    }
+
+
+
 }
 

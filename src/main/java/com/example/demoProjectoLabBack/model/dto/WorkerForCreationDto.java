@@ -6,6 +6,7 @@ public class WorkerForCreationDto {
     private String direccion;
     private int rating;
     private String jobId;
+    private String imageUrl;
 
 
     // Getters and setters
@@ -56,5 +57,8 @@ public class WorkerForCreationDto {
     public void setJobId(String jobId) {
         this.jobId = jobId;
     }
+
+    public void setImageUrl (String imageUrl){ this.imageUrl = imageUrl;}
+    public String getImageUrl() {return String.valueOf(imageUrl);}
 
 }

@@ -1,25 +1,30 @@
 package com.example.demoProjectoLabBack.service;
 
-import com.example.demoProjectoLabBack.model.dto.UserDto;
-import com.example.demoProjectoLabBack.model.dto.WorkerForCreationDto;
-import com.example.demoProjectoLabBack.model.dto.WorkerProfileDto;
-import com.example.demoProjectoLabBack.model.dto.WorkerProfileForEditDto;
+import com.example.demoProjectoLabBack.model.dto.*;
 import com.example.demoProjectoLabBack.persistance.entities.Job;
+import com.example.demoProjectoLabBack.persistance.entities.Rating;
 import com.example.demoProjectoLabBack.persistance.entities.User;
 import com.example.demoProjectoLabBack.persistance.entities.WorkerProfile;
 import com.example.demoProjectoLabBack.persistance.repository.JobRepository;
 import com.example.demoProjectoLabBack.persistance.repository.UserRepository;
 import com.example.demoProjectoLabBack.persistance.repository.WorkerRepository;
 import jakarta.transaction.Transactional;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.*;
-
 import java.util.stream.Collectors;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 @Service
 public class WorkerService {
+
+
+    private static final Logger logger = LoggerFactory.getLogger(WorkerService.class);
+
 
     @Autowired
     private WorkerRepository workerRepository;
@@ -43,6 +48,7 @@ public class WorkerService {
         workerProfile.setDni(request.getDni());
         workerProfile.setDireccion(request.getDireccion());
         workerProfile.setRating(request.getRating());
+        workerProfile.setImageUrl(request.getImageUrl());
 
 
 
@@ -109,19 +115,46 @@ public class WorkerService {
                 workerProfile.getDni(),
                 workerProfile.getDireccion(),
                 workerProfile.getRating(),
+                workerProfile.getImageUrl(),
                 userDto,
                 jobTitles);
     }
 
 
-    public void rateWorker(String workerId, int rating) {
+    public void rateWorker(String workerId, RatingDto ratingDto, String userId) {
+        //logger.info("Rating worker with ID: {}", workerId);
+        //logger.info("Rating DTO: Rating - {}, Comment - {}", ratingDto.getRating(), ratingDto.getComment());
+        //logger.info("Rated by user ID: {}", userId);
+
+        // Fetch the WorkerProfile by workerId
         Optional<WorkerProfile> workerProfileOptional = workerRepository.findById(workerId);
 
         if (workerProfileOptional.isPresent()) {
             WorkerProfile workerProfile = workerProfileOptional.get();
-            workerProfile.addRating(rating); // Add rating and recalculate average
-            workerRepository.save(workerProfile); // Save the updated profile
+
+            // Fetch the user who made the rating
+            Optional<User> ratedByUserOptional = userRepository.findById(userId);
+            if (!ratedByUserOptional.isPresent()) {
+                //logger.error("User with ID: {} not found", userId);
+                throw new RuntimeException("User not found for rating");
+            }
+            User ratedByUser = ratedByUserOptional.get();
+
+            // Add the rating and comment
+            Rating rating = new Rating();
+            rating.setRating(ratingDto.getRating());
+            rating.setComment(ratingDto.getComment());
+            rating.setRatedBy(ratedByUser);
+
+            //logger.info("Adding rating: {}", rating.getRating());
+
+            workerProfile.addRating(rating);
+
+            // Save the updated profile
+            workerRepository.save(workerProfile);
+            //logger.info("Worker profile updated with new rating.");
         } else {
+            //logger.error("Worker with ID: {} not found", workerId);
             throw new RuntimeException("Worker not found");
         }
     }
@@ -136,6 +169,7 @@ public class WorkerService {
         workerProfile.setDescription(updateData.getDescription());
         workerProfile.setDni(updateData.getDni());
         workerProfile.setDireccion(updateData.getDireccion());
+        workerProfile.setImageUrl(updateData.getImageUrl);
 
 
         // Save updated WorkerProfile

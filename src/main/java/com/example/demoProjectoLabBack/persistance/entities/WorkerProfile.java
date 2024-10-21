@@ -19,6 +19,7 @@ public class WorkerProfile {
     private int dni;
     private String direccion;
     private double rating = 0.0;
+    private String imageUrl;
 
     @DBRef
     private User user;
@@ -27,6 +28,8 @@ public class WorkerProfile {
     private Set<Job> jobs = new HashSet<>();
 
     private List<Integer> ratings = new ArrayList<>();
+
+    private List<Rating> comments = new ArrayList<>();
 
 
     // Getters and setters
@@ -86,21 +89,37 @@ public class WorkerProfile {
         this.jobs = jobs;
     }
 
+    public String getImageUrl() {
+        return imageUrl;
+    }
+
+    public void setImageUrl(String imageUrl) {
+        this.imageUrl = imageUrl;
+    }
+
+
     public void addJob(Job job) {
         this.jobs.add(job);
         job.getWorkerProfiles().add(this);  // Ensure bidirectional relationship
     }
 
-    public void addRating(int rating) {
-        this.ratings.add(rating);
-        calculateAverageRating();
+    public List<Rating> getComments() {
+        return comments;
     }
 
-    // Method to calculate the average rating
-    private void calculateAverageRating() {
-        if (!ratings.isEmpty()) {
-            this.rating = ratings.stream().mapToInt(Integer::intValue).average().orElse(0.0);
-        }
+    public void setComments(List<Rating> comments) {
+        this.comments = comments;
+    }
+
+    // Add rating method to append new ratings and calculate the average
+    public void addRating(Rating rating) {
+        this.comments.add(rating);
+        this.ratings.add(rating.getRating());
+        updateAverageRating();
+    }
+
+    private void updateAverageRating() {
+        this.rating = this.ratings.stream().mapToDouble(Integer::doubleValue).average().orElse(0.0);
     }
 
 }
