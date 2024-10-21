@@ -166,8 +166,7 @@ public class WorkerService {
                 .orElseThrow(() -> new RuntimeException("Worker profile not found for user ID: " + userId));
 
         // Update fields of the WorkerProfile from updateData
-        workerProfile.setDescription(updateData.getDescription());
-        workerProfile.setDni(updateData.getDni());
+        workerProfile.setDescription(updateData.getDescription());;
         workerProfile.setDireccion(updateData.getDireccion());
         workerProfile.setImageUrl(updateData.getImageUrl);
 
