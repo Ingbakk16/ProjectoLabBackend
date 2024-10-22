@@ -160,6 +160,32 @@ public class WorkerService {
     }
 
 
+    public List<RatingDto> getWorkerComments(String workerId) {
+        // Fetch the worker profile by ID
+        Optional<WorkerProfile> workerProfileOptional = workerRepository.findById(workerId);
+
+        if (workerProfileOptional.isPresent()) {
+            WorkerProfile workerProfile = workerProfileOptional.get();
+
+            // Extract ratings and convert to RatingDto objects
+            List<RatingDto> comments = workerProfile.getComments()
+                    .stream()
+                    .map(rating -> {
+                        RatingDto dto = new RatingDto();
+                        dto.setRating(rating.getRating());
+                        dto.setComment(rating.getComment());
+                        return dto;
+                    })
+                    .collect(Collectors.toList());
+
+            return comments;
+        } else {
+            throw new RuntimeException("Worker not found");
+        }
+    }
+
+
+
 
     public WorkerProfileDto updateWorkerProfile(String userId, WorkerProfileForEditDto updateData) {
         WorkerProfile workerProfile = workerRepository.findByUserId(userId)

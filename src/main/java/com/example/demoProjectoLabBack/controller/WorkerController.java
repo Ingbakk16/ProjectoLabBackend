@@ -125,5 +125,15 @@ public class WorkerController {
         }
     }
 
+    @GetMapping("/{workerId}/comments")
+    public ResponseEntity<List<RatingDto>> getWorkerComments(@PathVariable String workerId) {
+        try {
+            List<RatingDto> comments = workerService.getWorkerComments(workerId);
+            return ResponseEntity.ok(comments);
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+        }
+    }
+
 
 }
