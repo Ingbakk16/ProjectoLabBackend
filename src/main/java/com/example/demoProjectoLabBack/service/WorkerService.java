@@ -9,8 +9,10 @@ import com.example.demoProjectoLabBack.persistance.repository.JobRepository;
 import com.example.demoProjectoLabBack.persistance.repository.UserRepository;
 import com.example.demoProjectoLabBack.persistance.repository.WorkerRepository;
 import jakarta.transaction.Transactional;
+import org.bson.types.ObjectId;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
 import java.util.*;
@@ -18,6 +20,7 @@ import java.util.stream.Collectors;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.web.server.ResponseStatusException;
 
 @Service
 public class WorkerService {
@@ -55,23 +58,29 @@ public class WorkerService {
         Job job = jobRepository.findById(request.getJobId())
                 .orElseThrow(() -> new RuntimeException("Job not found"));
 
-        workerProfile.addJob(job);  // Add the job to workerProfile
+        if (job.getId() == null) {
+            throw new RuntimeException("The Job retrieved from the database has a null ID");
+        }
+
+        workerProfile.addJob(job);
+
+
+
 
         // Save the updated WorkerProfile and Job association
         workerRepository.save(workerProfile);
+
+        job.getWorkerProfiles().add(workerProfile);
+        jobRepository.save(job);
+
     }
 
 
-    public List<WorkerProfile> getWorkersByJobTitle(String title) {
-        List<Job> jobs = jobRepository.findByTitle(title);
-        if (jobs.isEmpty()) {
-            return Collections.emptyList(); // Return an empty list if no jobs found
-        }
-        return jobs.stream()
-                .map(Job::getWorkerProfiles)
-                .flatMap(Set::stream)
-                .distinct()
-                .collect(Collectors.toList());
+    public List<WorkerProfile> getWorkerProfilesByJobId(String jobId) {
+        logger.debug("Fetching WorkerProfiles for Job ID: {}", jobId);
+        List<WorkerProfile> profiles = workerRepository.findByJobs_Id(jobId);
+        logger.debug("Found WorkerProfiles: {}", profiles);
+        return profiles;
     }
 
     public List<WorkerProfileDto> findAllWorkers() {
@@ -140,6 +149,13 @@ public class WorkerService {
             }
             User ratedByUser = ratedByUserOptional.get();
 
+            boolean hasAlreadyRated = workerProfile.getComments().stream()
+                    .anyMatch(rating -> rating.getRatedBy().getId().equals(userId));
+
+            if (hasAlreadyRated) {
+                throw new RuntimeException("You have already rated this worker.");
+            }
+
             // Add the rating and comment
             Rating rating = new Rating();
             rating.setRating(ratingDto.getRating());
@@ -160,30 +176,27 @@ public class WorkerService {
     }
 
 
-    public List<RatingDto> getWorkerComments(String workerId) {
-        // Fetch the worker profile by ID
+    public List<RatingResponseDto> getWorkerComments(String workerId) {
         Optional<WorkerProfile> workerProfileOptional = workerRepository.findById(workerId);
 
         if (workerProfileOptional.isPresent()) {
             WorkerProfile workerProfile = workerProfileOptional.get();
+            List<RatingResponseDto> ratingDtos = new ArrayList<>();
 
-            // Extract ratings and convert to RatingDto objects
-            List<RatingDto> comments = workerProfile.getComments()
-                    .stream()
-                    .map(rating -> {
-                        RatingDto dto = new RatingDto();
-                        dto.setRating(rating.getRating());
-                        dto.setComment(rating.getComment());
-                        return dto;
-                    })
-                    .collect(Collectors.toList());
+            for (Rating rating : workerProfile.getComments()) {
+                RatingResponseDto ratingDto = new RatingResponseDto();
+                ratingDto.setId(rating.getId());  // Set the rating ID
+                ratingDto.setRating(rating.getRating());
+                ratingDto.setComment(rating.getComment());
+                ratingDto.setRatedByUserId(rating.getRatedBy().getUsername());  // Optionally include the rater's username
+                ratingDtos.add(ratingDto);
+            }
 
-            return comments;
+            return ratingDtos;
         } else {
             throw new RuntimeException("Worker not found");
         }
     }
-
 
 
 
@@ -203,6 +216,23 @@ public class WorkerService {
         return convertToDto(updatedProfile);  // Return updated DTO
     }
 
+
+    public void deleteWorkerComment(String workerId, String commentId) {
+        // Fetch the worker profile by ID
+        Optional<WorkerProfile> workerProfileOptional = workerRepository.findById(workerId);
+
+        if (workerProfileOptional.isPresent()) {
+            WorkerProfile workerProfile = workerProfileOptional.get();
+
+            // Find and remove the rating based on commentId
+            workerProfile.getComments().removeIf(rating -> rating.getId().equals(commentId));
+
+            // Save the updated profile after removal
+            workerRepository.save(workerProfile);
+        } else {
+            throw new RuntimeException("Worker not found");
+        }
+    }
 
 
 

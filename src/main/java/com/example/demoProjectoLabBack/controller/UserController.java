@@ -107,6 +107,7 @@ public class UserController {
     }
 
     @PutMapping("/edit")
+    @Operation(summary = "Update the authenticated user's profile")
     public ResponseEntity<UserDto> editUserProfile(
             @AuthenticationPrincipal JwtUserDetails jwtUserDetails,
             @RequestBody UserDto updateData) {

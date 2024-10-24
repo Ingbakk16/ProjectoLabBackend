@@ -1,6 +1,11 @@
 package com.example.demoProjectoLabBack.persistance.entities;
 
 import jakarta.persistence.*;
+import jakarta.validation.constraints.Email;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Size;
+import org.springframework.data.mongodb.core.index.Indexed;
 import org.springframework.data.mongodb.core.mapping.DBRef;
 import org.springframework.data.mongodb.core.mapping.Document;
 
@@ -13,10 +18,22 @@ public class User {
     @Id
     private String id;
 
+    @NotBlank @Size(min = 4, max = 20) @Indexed(unique = true)
     private String username;
+
+    @NotBlank
+    @Size(max = 128)
     private String name;
+
+    @NotBlank
+    @Size(max = 128)
     private String lastname;
+
+
+    @Email @Indexed(unique = true) @NotBlank
     private String email;
+
+    @NotBlank
     private String password;
 
     @DBRef

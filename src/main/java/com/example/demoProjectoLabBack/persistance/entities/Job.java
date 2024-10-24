@@ -1,6 +1,9 @@
 package com.example.demoProjectoLabBack.persistance.entities;
 
 import jakarta.persistence.*;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.Size;
+import org.springframework.data.mongodb.core.index.Indexed;
 import org.springframework.data.mongodb.core.mapping.DBRef;
 import org.springframework.data.mongodb.core.mapping.Document;
 
@@ -14,8 +17,12 @@ public class Job {
     @Id
     private String id;
 
+    @NotBlank @Size(min = 3, max = 24) @Indexed(unique = true)
     private String title;
+
+    @Size(min = 10, max = 64)
     private String description;
+
     private String skillsRequired;
 
     @DBRef
@@ -61,4 +68,10 @@ public class Job {
     public void setWorkerProfiles(Set<WorkerProfile> workerProfiles) {
         this.workerProfiles = workerProfiles;
     }
+
+    public void addWorkerProfile(WorkerProfile workerProfile) {
+        this.workerProfiles.add(workerProfile);
+        workerProfile.getJobs().add(this); // Ensure the worker profile knows about this job
+    }
+
 }

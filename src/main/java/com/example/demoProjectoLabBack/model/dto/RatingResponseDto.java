@@ -1,20 +1,11 @@
 package com.example.demoProjectoLabBack.model.dto;
 
-import com.example.demoProjectoLabBack.persistance.entities.User;
-import jakarta.validation.constraints.*;
-import org.springframework.data.mongodb.core.index.Indexed;
-import org.springframework.data.mongodb.core.mapping.DBRef;
-
-public class RatingDto {
+public class RatingResponseDto {
 
     private String id;
-
-    @Min(1) @Max(5)
     private int rating;
-
-    @NotBlank @Size(min = 5, max = 128)
     private String comment;
-
+    private String ratedByUserId;
 
 
 
@@ -42,11 +33,12 @@ public class RatingDto {
         this.comment = comment;
     }
 
-    //public String getRatedByUserId() {
-       // return ratedByUserId;
-   // }
+    public String getRatedByUserId() {
+        return ratedByUserId;
+    }
 
-   // public void setRatedByUserId(String ratedByUserId) {
-       // this.ratedByUserId = ratedByUserId;
-    //}
+    public void setRatedByUserId(String ratedByUserId) {
+        this.ratedByUserId = ratedByUserId;
+    }
+
 }

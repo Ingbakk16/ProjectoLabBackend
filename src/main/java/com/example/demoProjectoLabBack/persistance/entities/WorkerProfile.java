@@ -1,6 +1,11 @@
 package com.example.demoProjectoLabBack.persistance.entities;
 
 import jakarta.persistence.*;
+import jakarta.validation.constraints.Max;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Size;
+import org.springframework.data.mongodb.core.index.Indexed;
 import org.springframework.data.mongodb.core.mapping.DBRef;
 import org.springframework.data.mongodb.core.mapping.Document;
 
@@ -16,15 +21,21 @@ public class WorkerProfile {
     private String id;
 
     private String description;
+
+    @Max(8) @Column(unique = true)
     private int dni;
+
+
+    @Size(min = 4, max = 32)
     private String direccion;
+
     private double rating = 0.0;
+
     private String imageUrl;
 
     @DBRef
     private User user;
 
-    @DBRef
     private Set<Job> jobs = new HashSet<>();
 
     private List<Integer> ratings = new ArrayList<>();
@@ -99,8 +110,7 @@ public class WorkerProfile {
 
 
     public void addJob(Job job) {
-        this.jobs.add(job);
-        job.getWorkerProfiles().add(this);  // Ensure bidirectional relationship
+        this.jobs.add(job);  // Make sure this adds the job properly
     }
 
     public List<Rating> getComments() {

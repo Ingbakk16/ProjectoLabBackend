@@ -1,11 +1,27 @@
 package com.example.demoProjectoLabBack.model.dto;
 
+import jakarta.validation.constraints.Size;
+import org.springframework.data.mongodb.core.index.Indexed;
+
+import javax.validation.constraints.NotBlank;
+
 public class WorkerForCreationDto {
+
     private String description;
+
+    @NotBlank
     private int dni;
+
+
+    @Size(min = 4, max = 32)
     private String direccion;
-    private int rating;
+
+
+    private int rating = 0;
+
+    @NotBlank
     private String jobId;
+
     private String imageUrl;
 
 

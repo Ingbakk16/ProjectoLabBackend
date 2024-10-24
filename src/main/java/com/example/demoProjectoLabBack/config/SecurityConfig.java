@@ -42,7 +42,8 @@ public class SecurityConfig {
         http
                 .authorizeHttpRequests(authorizeRequests ->
                         authorizeRequests
-                                .requestMatchers("/public/**", "/api/users/register", "/api/auth/login").permitAll()  // Allow public access to specific endpoints
+                                .requestMatchers("/public/**", "/api/users/register", "/api/auth/login").permitAll()
+                                .requestMatchers("/v3/api-docs/**", "/swagger-ui/**", "/swagger-ui.html", "/webjars/**").permitAll()
                                 .requestMatchers("/api/admin/**").hasRole("ADMIN") // Only ADMIN role can access this
 
                                 .anyRequest().authenticated()  // All other requests require authentication

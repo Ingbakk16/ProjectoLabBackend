@@ -2,6 +2,7 @@ package com.example.demoProjectoLabBack.persistance.entities;
 
 import com.example.demoProjectoLabBack.model.enums.RoleName;
 import jakarta.persistence.*;
+import jakarta.validation.constraints.NotNull;
 import org.springframework.data.mongodb.core.mapping.Document;
 
 @Document(collection = "roles")
@@ -10,6 +11,7 @@ public class Role {
     @Id
     private String id;
 
+    @NotNull
     private RoleName name;
 
     // Getters and setters

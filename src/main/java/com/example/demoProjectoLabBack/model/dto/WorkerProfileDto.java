@@ -1,18 +1,34 @@
 package com.example.demoProjectoLabBack.model.dto;
 
+import jakarta.validation.constraints.Max;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.Size;
+import org.springframework.data.mongodb.core.index.Indexed;
+
 import java.util.List;
 
 public class WorkerProfileDto {
+
     private String id;
+
     private String description;
+
+    @NotBlank @Max(8)
     private int dni;
+
+    @Size(min = 4, max = 32)
     private String direccion;
+
     private double rating;
+
     private String imageUrl;
+
     private UserDto user;
+
     private List<String> jobTitles;
 
-    // Constructor
+
+
     public WorkerProfileDto(String id, String description, int dni, String direccion, double rating, String imageUrl, UserDto user, List<String> jobTitles) {
         this.id = id;
         this.description = description;

@@ -4,10 +4,7 @@ package com.example.demoProjectoLabBack.controller;
 import com.example.demoProjectoLabBack.Util.JwtUserDetails;
 import com.example.demoProjectoLabBack.config.SecurityConfig;
 import com.example.demoProjectoLabBack.filter.JwtAuthenticationFilter;
-import com.example.demoProjectoLabBack.model.dto.RatingDto;
-import com.example.demoProjectoLabBack.model.dto.WorkerForCreationDto;
-import com.example.demoProjectoLabBack.model.dto.WorkerProfileDto;
-import com.example.demoProjectoLabBack.model.dto.WorkerProfileForEditDto;
+import com.example.demoProjectoLabBack.model.dto.*;
 import com.example.demoProjectoLabBack.model.enums.RoleName;
 import com.example.demoProjectoLabBack.persistance.entities.User;
 import com.example.demoProjectoLabBack.persistance.entities.WorkerProfile;
@@ -38,6 +35,7 @@ public class WorkerController {
     private SecurityConfig securityConfig;
 
     @PutMapping("worker")
+    @Operation(summary = "Create a WorkerUser")
     public ResponseEntity<String> updateUserToWorker(
             @RequestBody WorkerForCreationDto request,
             @AuthenticationPrincipal JwtUserDetails jwtUserDetails) {
@@ -53,16 +51,15 @@ public class WorkerController {
 
             return ResponseEntity.ok("User updated to worker successfully");
         } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Error updating user");
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Error updating user: " + e.getMessage());
         }
     }
 
 
 
-    @GetMapping("/by-job/{title}")
-    public ResponseEntity<List<WorkerProfile>> getWorkersByJobTitle(@PathVariable String title) {
-        List<WorkerProfile> workers = workerService.getWorkersByJobTitle(title);
-        return ResponseEntity.ok(workers);
+    @GetMapping("/by-job/{jobId}")
+    public List<WorkerProfile> getWorkerProfilesByJobId(@PathVariable String jobId) {
+        return workerService.getWorkerProfilesByJobId(jobId);
     }
 
 
@@ -105,6 +102,7 @@ public class WorkerController {
 
 
     @PostMapping("/{workerId}/rate")
+    @Operation(summary = "Rate a Worker by an authenticated user")
     public ResponseEntity<String> rateWorker(
             @PathVariable String workerId,
             @RequestBody RatingDto ratingDto,
@@ -126,12 +124,13 @@ public class WorkerController {
     }
 
     @GetMapping("/{workerId}/comments")
-    public ResponseEntity<List<RatingDto>> getWorkerComments(@PathVariable String workerId) {
+    @Operation(summary = "Get all the comments of a worker by id")
+    public ResponseEntity<List<RatingResponseDto>> getWorkerComments(@PathVariable String workerId) {
         try {
-            List<RatingDto> comments = workerService.getWorkerComments(workerId);
+            List<RatingResponseDto> comments = workerService.getWorkerComments(workerId);
             return ResponseEntity.ok(comments);
         } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(null);
         }
     }
 
