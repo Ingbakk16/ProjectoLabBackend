@@ -72,6 +72,7 @@ public class UserService {
                 .orElseThrow(() -> new RuntimeException("User not found with ID: " + userId));
 
         // Update fields from updateData
+        user.setUsername(updateData.getUsername());
         user.setName(updateData.getName());
         user.setLastname(updateData.getLastname());
         user.setEmail(updateData.getEmail());

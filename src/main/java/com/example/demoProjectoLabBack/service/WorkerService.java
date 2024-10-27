@@ -40,7 +40,7 @@ public class WorkerService {
 
     @Transactional
     public void updateUserToWorker(String userId, WorkerForCreationDto request) {
-        // Fetch the user by ID from MongoDB
+
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new RuntimeException("User not found"));
 
@@ -63,11 +63,6 @@ public class WorkerService {
         }
 
         workerProfile.addJob(job);
-
-
-
-
-        // Save the updated WorkerProfile and Job association
         workerRepository.save(workerProfile);
 
         job.getWorkerProfiles().add(workerProfile);
