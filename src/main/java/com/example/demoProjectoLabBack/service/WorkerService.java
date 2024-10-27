@@ -202,7 +202,7 @@ public class WorkerService {
         // Update fields of the WorkerProfile from updateData
         workerProfile.setDescription(updateData.getDescription());;
         workerProfile.setDireccion(updateData.getDireccion());
-        workerProfile.setImageUrl(updateData.getImageUrl);
+        workerProfile.setImageUrl(updateData.getImageUrl());
 
 
         // Save updated WorkerProfile

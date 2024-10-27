@@ -3,7 +3,7 @@ package com.example.demoProjectoLabBack.model.dto;
 public class WorkerProfileForEditDto {
 
 
-    public String getImageUrl;
+
     private String description;
     private String direccion;
     private String imageUrl;
