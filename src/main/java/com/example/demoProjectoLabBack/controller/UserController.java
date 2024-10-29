@@ -8,10 +8,13 @@ import com.example.demoProjectoLabBack.config.SecurityConfig;
 import com.example.demoProjectoLabBack.model.dto.UserDto;
 import com.example.demoProjectoLabBack.model.dto.UserForEditDto;
 import com.example.demoProjectoLabBack.model.dto.UserForRegistrationDto;
+import com.example.demoProjectoLabBack.model.dto.WorkerProfileDto;
 import com.example.demoProjectoLabBack.model.enums.RoleName;
 import com.example.demoProjectoLabBack.persistance.entities.Role;
 import com.example.demoProjectoLabBack.persistance.entities.User;
+import com.example.demoProjectoLabBack.persistance.entities.WorkerProfile;
 import com.example.demoProjectoLabBack.service.UserService;
+import com.example.demoProjectoLabBack.service.WorkerService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -23,6 +26,7 @@ import org.springframework.web.bind.annotation.*;
 import  com.example.demoProjectoLabBack.persistance.repository.RoleRepository;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("/api/users")
@@ -31,6 +35,9 @@ public class UserController {
 
     @Autowired
     private UserService userService;
+
+    @Autowired
+    private WorkerService workerService;
 
     @Autowired
     private RoleRepository roleRepository;
@@ -100,10 +107,13 @@ public class UserController {
         return userService.findAllUsersWithWorkerRole();
     }
 
-    @DeleteMapping("/{id}")
+    @DeleteMapping("/delete")
     @Operation(summary = "Delete a user by ID")
-    public void deleteUser(@PathVariable String id) {
-        userService.deleteUser(id);
+    public void deleteUser(@AuthenticationPrincipal JwtUserDetails jwtUserDetails) {
+
+        String userId = jwtUserDetails.getId();
+
+        userService.deleteUser(userId);
     }
 
     @PutMapping("/edit")
@@ -120,6 +130,8 @@ public class UserController {
 
         return ResponseEntity.ok(updatedUser);
     }
+
+
 
 
 }
