@@ -16,5 +16,9 @@ public interface WorkerRepository extends MongoRepository<WorkerProfile, String>
     // Additional query methods (if needed) can be defined here
     Optional<WorkerProfile> findByUserId(String userId);
 
-    List<WorkerProfile> findByJobs_Id(String jobId);
+    //List<WorkerProfile> findByJobs_Id(String jobId);
+
+    List<WorkerProfile> findByJobIdsContaining(String jobId);
+
+
 }

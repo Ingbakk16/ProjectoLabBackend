@@ -58,7 +58,7 @@ public class WorkerController {
 
 
     @GetMapping("/by-job/{jobId}")
-    public List<WorkerProfile> getWorkerProfilesByJobId(@PathVariable String jobId) {
+    public List<WorkerProfileDto> getWorkerProfilesByJobId(@PathVariable String jobId) {
         return workerService.getWorkerProfilesByJobId(jobId);
     }
 

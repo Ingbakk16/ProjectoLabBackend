@@ -36,7 +36,7 @@ public class WorkerProfile {
     @DBRef
     private User user;
 
-    private Set<Job> jobs = new HashSet<>();
+    private Set<String> jobIds = new HashSet<>();
 
     private List<Integer> ratings = new ArrayList<>();
 
@@ -92,13 +92,14 @@ public class WorkerProfile {
         this.user = user;
     }
 
-    public Set<Job> getJobs() {
-        return jobs;
+    public Set<String> getJobIds() {
+        return jobIds;
     }
 
-    public void setJobs(Set<Job> jobs) {
-        this.jobs = jobs;
+    public void setJobIds(Set<String> jobIds) {
+        this.jobIds = jobIds;
     }
+
 
     public String getImageUrl() {
         return imageUrl;
@@ -109,8 +110,8 @@ public class WorkerProfile {
     }
 
 
-    public void addJob(Job job) {
-        this.jobs.add(job);  // Make sure this adds the job properly
+    public void addJobId(String jobId) {
+        this.jobIds.add(jobId);
     }
 
     public List<Rating> getComments() {

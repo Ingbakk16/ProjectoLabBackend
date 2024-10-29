@@ -44,7 +44,6 @@ public class WorkerService {
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new RuntimeException("User not found"));
 
-        // Create or update the WorkerProfile for the user
         WorkerProfile workerProfile = new WorkerProfile();
         workerProfile.setUser(user);
         workerProfile.setDescription(request.getDescription());
@@ -57,25 +56,29 @@ public class WorkerService {
 
         Job job = jobRepository.findById(request.getJobId())
                 .orElseThrow(() -> new RuntimeException("Job not found"));
+        workerProfile.addJobId(job.getId());
 
-        if (job.getId() == null) {
-            throw new RuntimeException("The Job retrieved from the database has a null ID");
-        }
-
-        workerProfile.addJob(job);
         workerRepository.save(workerProfile);
 
-        job.getWorkerProfiles().add(workerProfile);
+
+        job.getWorkerProfileIds().add(workerProfile.getId());
         jobRepository.save(job);
 
     }
 
 
-    public List<WorkerProfile> getWorkerProfilesByJobId(String jobId) {
+    public List<WorkerProfileDto> getWorkerProfilesByJobId(String jobId) {
         logger.debug("Fetching WorkerProfiles for Job ID: {}", jobId);
-        List<WorkerProfile> profiles = workerRepository.findByJobs_Id(jobId);
-        logger.debug("Found WorkerProfiles: {}", profiles);
-        return profiles;
+        List<WorkerProfile> profiles = workerRepository.findByJobIdsContaining(jobId);
+
+        if (profiles == null || profiles.isEmpty()) {
+            return Collections.emptyList();
+        }
+
+        // Map to WorkerProfileDto to filter only necessary fields
+        return profiles.stream()
+                .map(this::convertToDto)  // Using the same convertToDto as in findAllWorkers
+                .collect(Collectors.toList());
     }
 
     public List<WorkerProfileDto> findAllWorkers() {
@@ -102,17 +105,15 @@ public class WorkerService {
 
     private WorkerProfileDto convertToDto(WorkerProfile workerProfile) {
         if (workerProfile == null) {
-            return null; // or throw an exception
+            return null;
         }
 
         User user = workerProfile.getUser();
         UserDto userDto = (user != null) ? new UserDto(user.getId(), user.getUsername(), user.getName(), user.getLastname(), user.getEmail()) : null;
 
-        List<String> jobTitles = workerProfile.getJobs() != null ?
-                workerProfile.getJobs().stream()
-                        .filter(Objects::nonNull) // Ensure Job is not null
-                        .map(Job::getTitle)
-                        .collect(Collectors.toList()) : Collections.emptyList();
+        List<String> jobTitles = workerProfile.getJobIds().stream()
+                .map(jobId -> jobRepository.findById(jobId).map(Job::getTitle).orElse("Unknown Job"))
+                .collect(Collectors.toList());
 
         return new WorkerProfileDto(workerProfile.getId(),
                 workerProfile.getDescription(),
@@ -122,6 +123,12 @@ public class WorkerService {
                 workerProfile.getImageUrl(),
                 userDto,
                 jobTitles);
+    }
+
+    public List<WorkerProfileDto> convertWorkersToDto(List<WorkerProfile> workers) {
+        return workers.stream()
+                .map(this::convertToDto)  // Calls the private `convertToDto` method for each worker
+                .collect(Collectors.toList());
     }
 
 
@@ -228,6 +235,9 @@ public class WorkerService {
             throw new RuntimeException("Worker not found");
         }
     }
+
+
+
 
 
 

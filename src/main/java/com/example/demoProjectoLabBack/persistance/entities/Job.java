@@ -25,8 +25,8 @@ public class Job {
 
     private String skillsRequired;
 
-    @DBRef
-    private Set<WorkerProfile> workerProfiles = new HashSet<>();
+
+    private Set<String> workerProfileIds = new HashSet<>();
 
     // Getters and setters
     public String getId() {
@@ -61,17 +61,21 @@ public class Job {
         this.skillsRequired = skillsRequired;
     }
 
-    public Set<WorkerProfile> getWorkerProfiles() {
-        return workerProfiles;
+    public Set<String> getWorkerProfileIds() {
+        return workerProfileIds;
     }
 
-    public void setWorkerProfiles(Set<WorkerProfile> workerProfiles) {
-        this.workerProfiles = workerProfiles;
+    public void setWorkerProfileIds(Set<String> workerProfileIds) {
+        this.workerProfileIds = workerProfileIds;
     }
 
+    // Update to add only WorkerProfile ID
     public void addWorkerProfile(WorkerProfile workerProfile) {
-        this.workerProfiles.add(workerProfile);
-        workerProfile.getJobs().add(this); // Ensure the worker profile knows about this job
+        if (workerProfile.getId() == null) {
+            throw new RuntimeException("Cannot add a worker profile with a null ID");
+        }
+        // Add only the worker profile ID to the Job's workerProfileIds set
+        this.workerProfileIds.add(workerProfile.getId());
     }
 
 }
