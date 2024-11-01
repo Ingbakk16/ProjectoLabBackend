@@ -7,6 +7,7 @@ public class WorkerProfileForEditDto {
     private String description;
     private String direccion;
     private String imageUrl;
+    private long phoneNumber;
 
 
 
@@ -16,6 +17,12 @@ public class WorkerProfileForEditDto {
     public void setDireccion(String direccion) { this.direccion = direccion; }
     public String getImageUrl() { return imageUrl; }
     public void setImageUrl(String imageUrl) { this.imageUrl = imageUrl; }
+    public long getPhoneNumber() {
+        return phoneNumber;
+    }
+    public void setPhoneNumber(long phoneNumber) {
+        this.phoneNumber = phoneNumber;
+    }
 
 
 }

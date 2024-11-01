@@ -100,8 +100,8 @@ public class AdminController {
     @PutMapping("worker/{userId}")
     @Operation(summary = "Create a WorkerUser")
     public ResponseEntity<String> updateUserToWorker(
-            @RequestBody WorkerForCreationDto request,
-            String userId) {
+            @PathVariable String userId,
+            @RequestBody WorkerForCreationDto request) {
         try {
 
 
@@ -124,7 +124,7 @@ public class AdminController {
             String userId,
             @RequestBody WorkerProfileForEditDto updateData) {
 
-        // Extract userId from token
+
 
 
         // Call the service to update the worker profile

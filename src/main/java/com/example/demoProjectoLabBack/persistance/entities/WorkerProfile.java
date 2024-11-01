@@ -29,6 +29,8 @@ public class WorkerProfile {
     @Size(min = 4, max = 32)
     private String direccion;
 
+    private long phoneNumber;
+
     private double rating = 0.0;
 
     private String imageUrl;
@@ -74,6 +76,14 @@ public class WorkerProfile {
 
     public void setDireccion(String direccion) {
         this.direccion = direccion;
+    }
+
+    public long getPhoneNumber() {
+        return phoneNumber;
+    }
+
+    public void setPhoneNumber(long phoneNumber) {
+        this.phoneNumber = phoneNumber;
     }
 
     public double getRating() {
@@ -122,6 +132,13 @@ public class WorkerProfile {
         this.comments = comments;
     }
 
+    public List<Integer> getRatings() {
+        return ratings;
+    }
+
+    public void setRatings(List<Integer> comments) {
+    }
+
     // Add rating method to append new ratings and calculate the average
     public void addRating(Rating rating) {
         this.comments.add(rating);
@@ -129,7 +146,7 @@ public class WorkerProfile {
         updateAverageRating();
     }
 
-    private void updateAverageRating() {
+    public void updateAverageRating() {
         this.rating = this.ratings.stream().mapToDouble(Integer::doubleValue).average().orElse(0.0);
     }
 

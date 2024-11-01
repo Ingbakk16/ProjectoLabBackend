@@ -51,6 +51,7 @@ public class WorkerService {
         workerProfile.setDireccion(request.getDireccion());
         workerProfile.setRating(request.getRating());
         workerProfile.setImageUrl(request.getImageUrl());
+        workerProfile.setPhoneNumber(request.getPhoneNumber());
 
 
 
@@ -116,13 +117,14 @@ public class WorkerService {
                 .collect(Collectors.toList());
 
         return new WorkerProfileDto(workerProfile.getId(),
-                workerProfile.getDescription(),
-                workerProfile.getDni(),
-                workerProfile.getDireccion(),
-                workerProfile.getRating(),
-                workerProfile.getImageUrl(),
-                userDto,
-                jobTitles);
+                        workerProfile.getDescription(),
+                        workerProfile.getDni(),
+                        workerProfile.getDireccion(),
+                        workerProfile.getRating(),
+                        workerProfile.getImageUrl(),
+                        userDto,
+                        jobTitles,
+                        workerProfile.getPhoneNumber());
     }
 
     public List<WorkerProfileDto> convertWorkersToDto(List<WorkerProfile> workers) {
@@ -137,13 +139,13 @@ public class WorkerService {
         //logger.info("Rating DTO: Rating - {}, Comment - {}", ratingDto.getRating(), ratingDto.getComment());
         //logger.info("Rated by user ID: {}", userId);
 
-        // Fetch the WorkerProfile by workerId
+
         Optional<WorkerProfile> workerProfileOptional = workerRepository.findById(workerId);
 
         if (workerProfileOptional.isPresent()) {
             WorkerProfile workerProfile = workerProfileOptional.get();
 
-            // Fetch the user who made the rating
+
             Optional<User> ratedByUserOptional = userRepository.findById(userId);
             if (!ratedByUserOptional.isPresent()) {
                 //logger.error("User with ID: {} not found", userId);
@@ -158,7 +160,7 @@ public class WorkerService {
                 throw new RuntimeException("You have already rated this worker.");
             }
 
-            // Add the rating and comment
+
             Rating rating = new Rating();
             rating.setRating(ratingDto.getRating());
             rating.setComment(ratingDto.getComment());
@@ -168,7 +170,7 @@ public class WorkerService {
 
             workerProfile.addRating(rating);
 
-            // Save the updated profile
+
             workerRepository.save(workerProfile);
             //logger.info("Worker profile updated with new rating.");
         } else {
@@ -220,14 +222,27 @@ public class WorkerService {
 
 
     public void deleteWorkerComment(String workerId, String commentId) {
-        // Fetch the worker profile by ID
+
         Optional<WorkerProfile> workerProfileOptional = workerRepository.findById(workerId);
 
         if (workerProfileOptional.isPresent()) {
             WorkerProfile workerProfile = workerProfileOptional.get();
 
-            // Find and remove the rating based on commentId
-            workerProfile.getComments().removeIf(rating -> rating.getId().equals(commentId));
+
+            Rating ratingToDelete = workerProfile.getComments().stream()
+                    .filter(rating -> rating.getId().equals(commentId))
+                    .findFirst()
+                    .orElseThrow(() -> new RuntimeException("Comment not found"));
+
+
+            workerProfile.getComments().remove(ratingToDelete);
+
+
+            workerProfile.getRatings().removeIf(ratingScore -> ratingScore == ratingToDelete.getRating());
+
+            workerProfile.updateAverageRating();
+
+
 
             // Save the updated profile after removal
             workerRepository.save(workerProfile);
@@ -235,7 +250,6 @@ public class WorkerService {
             throw new RuntimeException("Worker not found");
         }
     }
-
 
 
 

@@ -16,6 +16,8 @@ public class WorkerForCreationDto {
     @Size(min = 4, max = 32)
     private String direccion;
 
+    private long phoneNumber;
+
 
     private int rating = 0;
 
@@ -54,6 +56,14 @@ public class WorkerForCreationDto {
 
     public void setDirection(String direccion) {
         this.direccion = direccion;
+    }
+
+    public long getPhoneNumber() {
+        return phoneNumber;
+    }
+
+    public void setPhoneNumber(long phoneNumber) {
+        this.phoneNumber = phoneNumber;
     }
 
 

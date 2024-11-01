@@ -19,6 +19,8 @@ public class WorkerProfileDto {
     @Size(min = 4, max = 32)
     private String direccion;
 
+    private long phoneNumber;
+
     private double rating;
 
     private String imageUrl;
@@ -29,15 +31,18 @@ public class WorkerProfileDto {
 
 
 
-    public WorkerProfileDto(String id, String description, int dni, String direccion, double rating, String imageUrl, UserDto user, List<String> jobTitles) {
+    public WorkerProfileDto(String id, String description, int dni, String direccion, double rating, String imageUrl, UserDto user, List<String> jobTitles, long phoneNumber) {
         this.id = id;
         this.description = description;
         this.dni = dni;
         this.direccion = direccion;
         this.rating = rating;
         this.imageUrl = imageUrl;
+        this.phoneNumber = phoneNumber;
         this.user = user;
         this.jobTitles = jobTitles;
+
+
     }
 
     // Getters and setters
@@ -57,4 +62,10 @@ public class WorkerProfileDto {
     public void setJobTitles(List<String> jobTitles) { this.jobTitles = jobTitles; }
     public String getImageUrl() { return imageUrl; }
     public void setImageUrl(String imageUrl) { this.imageUrl = imageUrl; }
+    public long getPhoneNumber() {
+        return phoneNumber;
+    }
+    public void setPhoneNumber(long phoneNumber) {
+        this.phoneNumber = phoneNumber;
+    }
 }
