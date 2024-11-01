@@ -121,7 +121,7 @@ public class AdminController {
     @PutMapping("/edit_profile/{userId}")
     @Operation(summary = "Update the authenticated user's worker profile")
     public ResponseEntity<WorkerProfileDto> updateWorkerProfile(
-            String userId,
+            @PathVariable String userId,
             @RequestBody WorkerProfileForEditDto updateData) {
 
 
@@ -137,7 +137,7 @@ public class AdminController {
 
     @PostMapping("/create-admin")
     @Operation(summary = "Register a new admin")
-    public User registerUser(@Validated @RequestBody UserForRegistrationDto userForRegistrationDto) {
+    public User registerAdminUser(@Validated @RequestBody UserForRegistrationDto userForRegistrationDto) {
 
 
 
@@ -153,6 +153,37 @@ public class AdminController {
 
         // Fetch the default role ROLE_USER from MongoDB
         Role defaultRole = roleRepository.findByName(RoleName.ROLE_ADMIN)
+                .orElseThrow(() -> new RuntimeException("Error: Role is not found."));
+
+        // Assign default role to the user
+        user.setRole(defaultRole);
+
+        // Save the user in MongoDB
+        return userService.createUser(user);
+    }
+
+
+    @PostMapping("/register")
+    @Operation(summary = "Register a new user")
+    public User registerUser(@Validated @RequestBody UserForRegistrationDto userForRegistrationDto) {
+        // Check if the username is already taken
+        if (userService.isUsernameTaken(userForRegistrationDto.getUsername())) {
+            throw new RuntimeException("Error: Username is already taken!");
+        }
+
+        // Convert UserDTO to User
+        User user = new User();
+        user.setUsername(userForRegistrationDto.getUsername());
+        user.setName(userForRegistrationDto.getName());
+        user.setLastname(userForRegistrationDto.getLastname());
+        user.setEmail(userForRegistrationDto.getEmail());
+
+        // Encode the password before saving
+        String encodedPassword = passwordEncoder.encode(userForRegistrationDto.getPassword());
+        user.setPassword(encodedPassword);
+
+        // Fetch the default role ROLE_USER from MongoDB
+        Role defaultRole = roleRepository.findByName(RoleName.ROLE_USER)
                 .orElseThrow(() -> new RuntimeException("Error: Role is not found."));
 
         // Assign default role to the user
