@@ -212,6 +212,7 @@ public class WorkerService {
         workerProfile.setDescription(updateData.getDescription());;
         workerProfile.setDireccion(updateData.getDireccion());
         workerProfile.setImageUrl(updateData.getImageUrl());
+        workerProfile.setPhoneNumber(updateData.getPhoneNumber());
 
 
         // Save updated WorkerProfile
