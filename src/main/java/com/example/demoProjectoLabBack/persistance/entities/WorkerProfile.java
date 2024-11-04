@@ -22,14 +22,16 @@ public class WorkerProfile {
 
     private String description;
 
-    @Max(8) @Column(unique = true)
-    private int dni;
+    @Max(value = 99999999, message = "DNI must be up to 8 digits")
+    @Indexed(unique = true)
+    private Integer dni;
 
 
-    @Size(min = 4, max = 32)
+    @Size(min = 4, max = 32, message = "Direccion must be between 4 and 32 characters")
     private String direccion;
 
-    private long phoneNumber;
+    @Indexed(unique = true)
+    private Long phoneNumber;
 
     private double rating = 0.0;
 

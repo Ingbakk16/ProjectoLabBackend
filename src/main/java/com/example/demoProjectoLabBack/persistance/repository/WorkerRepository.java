@@ -20,5 +20,9 @@ public interface WorkerRepository extends MongoRepository<WorkerProfile, String>
 
     List<WorkerProfile> findByJobIdsContaining(String jobId);
 
+    Optional findByDni(Integer dni);
+
+    Optional findByPhoneNumber(long phoneNumber);
+
 
 }

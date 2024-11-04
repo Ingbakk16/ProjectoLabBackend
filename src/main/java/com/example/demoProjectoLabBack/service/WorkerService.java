@@ -38,6 +38,18 @@ public class WorkerService {
     @Autowired
     private UserRepository userRepository;
 
+
+
+    public boolean isDniTaken(Integer dni) {
+        return workerRepository.findByDni(dni).isPresent();
+    }
+
+    public boolean isPhoneNumberTaken(long phoneNumber) {
+        return workerRepository.findByPhoneNumber(phoneNumber).isPresent();
+    }
+
+
+
     @Transactional
     public void updateUserToWorker(String userId, WorkerForCreationDto request) {
 

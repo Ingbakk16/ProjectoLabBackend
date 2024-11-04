@@ -11,6 +11,7 @@ import com.example.demoProjectoLabBack.persistance.entities.WorkerProfile;
 import com.example.demoProjectoLabBack.service.UserService;
 import com.example.demoProjectoLabBack.service.WorkerService;
 import io.swagger.v3.oas.annotations.Operation;
+import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -37,8 +38,11 @@ public class WorkerController {
     @PutMapping("worker")
     @Operation(summary = "Create a WorkerUser")
     public ResponseEntity<String> updateUserToWorker(
+            @Valid
             @RequestBody WorkerForCreationDto request,
             @AuthenticationPrincipal JwtUserDetails jwtUserDetails) {
+
+
         try {
             // Extract userId from the token
             String userId = jwtUserDetails.getId();

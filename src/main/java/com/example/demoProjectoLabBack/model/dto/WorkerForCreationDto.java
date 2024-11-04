@@ -1,5 +1,7 @@
 package com.example.demoProjectoLabBack.model.dto;
 
+import jakarta.validation.constraints.Min;
+import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 import org.springframework.data.mongodb.core.index.Indexed;
 
@@ -7,21 +9,22 @@ import javax.validation.constraints.NotBlank;
 
 public class WorkerForCreationDto {
 
+    @Size(min = 3, max = 164, message = "Description must be between 3 and 164 characters")
     private String description;
 
-    @NotBlank
-    private int dni;
+    @NotNull(message = "DNI is mandatory")
+    @Min(value = 1, message = "DNI must be a positive number")
+    private Integer dni;
 
-
-    @Size(min = 4, max = 32)
+    @Size(min = 4, max = 32, message = "Direccion must be between 4 and 32 characters")
     private String direccion;
 
-    private long phoneNumber;
-
+    @NotNull(message = "Phone number is mandatory")
+    private Long phoneNumber;
 
     private int rating = 0;
 
-    @NotBlank
+    @NotBlank(message = "Job ID is mandatory")
     private String jobId;
 
     private String imageUrl;

@@ -54,6 +54,9 @@ public class UserController {
         if (userService.isUsernameTaken(userForRegistrationDto.getUsername())) {
             throw new RuntimeException("Error: Username is already taken!");
         }
+        if (userService.isEmailTaken(userForRegistrationDto.getEmail())){
+            throw new RuntimeException("Error: Email is already taken!");
+        }
 
         // Convert UserDTO to User
         User user = new User();

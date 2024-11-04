@@ -1,6 +1,7 @@
 package com.example.demoProjectoLabBack.model.dto;
 
 import com.example.demoProjectoLabBack.persistance.entities.Role;
+import org.springframework.data.mongodb.core.index.Indexed;
 
 import javax.validation.constraints.Email;
 import javax.validation.constraints.NotBlank;
