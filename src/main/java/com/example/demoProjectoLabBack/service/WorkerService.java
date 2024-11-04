@@ -62,7 +62,6 @@ public class WorkerService {
         workerProfile.setDni(request.getDni());
         workerProfile.setDireccion(request.getDireccion());
         workerProfile.setRating(request.getRating());
-        workerProfile.setImageUrl(request.getImageUrl());
         workerProfile.setPhoneNumber(request.getPhoneNumber());
 
 
@@ -128,12 +127,16 @@ public class WorkerService {
                 .map(jobId -> jobRepository.findById(jobId).map(Job::getTitle).orElse("Unknown Job"))
                 .collect(Collectors.toList());
 
+        List<String> imageUrls = (workerProfile.getImageUrls() != null) ? workerProfile.getImageUrls() : new ArrayList<>();
+
+
         return new WorkerProfileDto(workerProfile.getId(),
                         workerProfile.getDescription(),
                         workerProfile.getDni(),
                         workerProfile.getDireccion(),
                         workerProfile.getRating(),
-                        workerProfile.getImageUrl(),
+                        workerProfile.getImageUrls(),
+                        imageUrls,
                         userDto,
                         jobTitles,
                         workerProfile.getPhoneNumber());
@@ -214,6 +217,28 @@ public class WorkerService {
         }
     }
 
+    @Transactional
+    public void addImageToWorkerProfile(String userId, String imageUrl) {
+        WorkerProfile workerProfile = workerRepository.findByUserId(userId)
+                .orElseThrow(() -> new RuntimeException("Worker not found"));
+
+        if (workerProfile.getImageUrls().size() >= 3) {
+            throw new RuntimeException("Cannot add more than 3 images");
+        }
+
+        workerProfile.addImageUrl(imageUrl);
+        workerRepository.save(workerProfile);
+    }
+
+    @Transactional
+    public void removeImageFromWorkerProfile(String userId, String imageUrl) {
+        WorkerProfile workerProfile = workerRepository.findByUserId(userId)
+                .orElseThrow(() -> new RuntimeException("Worker not found"));
+
+        workerProfile.removeImageUrl(imageUrl);
+        workerRepository.save(workerProfile);
+    }
+
 
 
     public WorkerProfileDto updateWorkerProfile(String userId, WorkerProfileForEditDto updateData) {
@@ -223,7 +248,6 @@ public class WorkerService {
         // Update fields of the WorkerProfile from updateData
         workerProfile.setDescription(updateData.getDescription());;
         workerProfile.setDireccion(updateData.getDireccion());
-        workerProfile.setImageUrl(updateData.getImageUrl());
         workerProfile.setPhoneNumber(updateData.getPhoneNumber());
 
 
@@ -262,6 +286,11 @@ public class WorkerService {
         } else {
             throw new RuntimeException("Worker not found");
         }
+
+
+
+
+
     }
 
 

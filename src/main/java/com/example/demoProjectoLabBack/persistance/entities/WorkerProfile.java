@@ -35,7 +35,7 @@ public class WorkerProfile {
 
     private double rating = 0.0;
 
-    private String imageUrl;
+    private List<String> imageUrls = new ArrayList<>();
 
     @DBRef
     private User user;
@@ -113,12 +113,24 @@ public class WorkerProfile {
     }
 
 
-    public String getImageUrl() {
-        return imageUrl;
+    public List<String> getImageUrls() {
+        return imageUrls;
     }
 
-    public void setImageUrl(String imageUrl) {
-        this.imageUrl = imageUrl;
+    public void setImageUrls(List<String> imageUrls) {
+        this.imageUrls = imageUrls;
+    }
+
+    public void addImageUrl(String imageUrl) {
+        if (imageUrls.size() < 3) {
+            this.imageUrls.add(imageUrl);
+        } else {
+            throw new RuntimeException("Cannot add more than 3 images");
+        }
+    }
+
+    public void removeImageUrl(String imageUrl) {
+        this.imageUrls.remove(imageUrl);
     }
 
 

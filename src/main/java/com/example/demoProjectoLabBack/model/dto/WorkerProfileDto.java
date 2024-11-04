@@ -3,7 +3,6 @@ package com.example.demoProjectoLabBack.model.dto;
 import jakarta.validation.constraints.Max;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;
-import org.springframework.data.mongodb.core.index.Indexed;
 
 import java.util.List;
 
@@ -23,7 +22,7 @@ public class WorkerProfileDto {
 
     private double rating;
 
-    private String imageUrl;
+    private List<String> imageUrls;
 
     private UserDto user;
 
@@ -31,16 +30,18 @@ public class WorkerProfileDto {
 
 
 
-    public WorkerProfileDto(String id, String description, int dni, String direccion, double rating, String imageUrl, UserDto user, List<String> jobTitles, long phoneNumber) {
+    public WorkerProfileDto(String id, String description, int dni, String direccion, double rating, List<String> imageUrls, List<String> urls, UserDto user, List<String> jobTitles, long phoneNumber) {
         this.id = id;
         this.description = description;
         this.dni = dni;
         this.direccion = direccion;
         this.rating = rating;
-        this.imageUrl = imageUrl;
         this.phoneNumber = phoneNumber;
+        this.imageUrls = imageUrls;
         this.user = user;
         this.jobTitles = jobTitles;
+
+
 
 
     }
@@ -60,8 +61,8 @@ public class WorkerProfileDto {
     public void setUser(UserDto user) { this.user = user; }
     public List<String> getJobTitles() { return jobTitles; }
     public void setJobTitles(List<String> jobTitles) { this.jobTitles = jobTitles; }
-    public String getImageUrl() { return imageUrl; }
-    public void setImageUrl(String imageUrl) { this.imageUrl = imageUrl; }
+    public List<String> getImageUrls() { return imageUrls; }
+    public void setImageUrls(List<String> imageUrl) { this.imageUrls = imageUrl; }
     public long getPhoneNumber() {
         return phoneNumber;
     }

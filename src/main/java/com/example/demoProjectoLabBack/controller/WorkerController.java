@@ -138,5 +138,41 @@ public class WorkerController {
         }
     }
 
+    @PostMapping("/images/add")
+    public ResponseEntity<String> addImageToWorkerProfile(
+            @RequestBody String imageUrl,
+            @AuthenticationPrincipal JwtUserDetails jwtUserDetails) {
+        try {
+            String userId = jwtUserDetails.getId();
+
+
+            workerService.addImageToWorkerProfile(userId, imageUrl);
+            return ResponseEntity.ok("Image added successfully");
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
+        }
+    }
+
+
+    @DeleteMapping("/images/delete")
+    public ResponseEntity<String> removeImageFromWorkerProfile(
+            @RequestBody String imageUrl,
+            @AuthenticationPrincipal JwtUserDetails jwtUserDetails
+            ) {
+        try {
+
+            String userId = jwtUserDetails.getId();
+
+
+            workerService.removeImageFromWorkerProfile(userId, imageUrl);
+            return ResponseEntity.ok("Image removed successfully");
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
+        }
+    }
+
+
 
 }
+
+

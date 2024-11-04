@@ -27,7 +27,6 @@ public class WorkerForCreationDto {
     @NotBlank(message = "Job ID is mandatory")
     private String jobId;
 
-    private String imageUrl;
 
 
     // Getters and setters
@@ -87,7 +86,6 @@ public class WorkerForCreationDto {
         this.jobId = jobId;
     }
 
-    public void setImageUrl (String imageUrl){ this.imageUrl = imageUrl;}
-    public String getImageUrl() {return String.valueOf(imageUrl);}
+
 
 }
