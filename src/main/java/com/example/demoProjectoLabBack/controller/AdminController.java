@@ -26,7 +26,7 @@ import java.util.List;
 @RestController
 @RequestMapping("/api/admin")
 @Tag(name = "Admin Controller", description = "Admin operations such as user, job, and role management")
-@PreAuthorize("hasRole('ADMIN')")  // Ensure only admins can access these endpoints
+@PreAuthorize("hasRole('ADMIN')")
 public class AdminController {
 
 
@@ -46,11 +46,11 @@ public class AdminController {
     private PasswordEncoder passwordEncoder;
 
 
-    // Endpoint to create a new job
+
     @PostMapping("/jobs")
     @Operation(summary = "Create a new job")
     public ResponseEntity<Job> createJob(@RequestBody JobDto jobDto) {
-        Job createdJob = jobService.createJob(jobDto);  // Converts JobDto to Job and saves it
+        Job createdJob = jobService.createJob(jobDto);
         return ResponseEntity.status(HttpStatus.CREATED).body(createdJob);
     }
 
@@ -106,10 +106,10 @@ public class AdminController {
 
 
 
-            // Create the worker profile
+
             workerService.updateUserToWorker(userId, request);
 
-            // Update the user role to ROLE_WORKER
+
             userService.updateUserRole(userId, RoleName.ROLE_WORKER);
 
             return ResponseEntity.ok("User updated to worker successfully");
@@ -127,7 +127,7 @@ public class AdminController {
 
 
 
-        // Call the service to update the worker profile
+
         WorkerProfileDto updatedProfile = workerService.updateWorkerProfile(userId, updateData);
 
         return ResponseEntity.ok(updatedProfile);
@@ -147,18 +147,18 @@ public class AdminController {
         user.setLastname(userForRegistrationDto.getLastname());
         user.setEmail(userForRegistrationDto.getEmail());
 
-        // Encode the password before saving
+
         String encodedPassword = passwordEncoder.encode(userForRegistrationDto.getPassword());
         user.setPassword(encodedPassword);
 
-        // Fetch the default role ROLE_USER from MongoDB
+
         Role defaultRole = roleRepository.findByName(RoleName.ROLE_ADMIN)
                 .orElseThrow(() -> new RuntimeException("Error: Role is not found."));
 
-        // Assign default role to the user
+
         user.setRole(defaultRole);
 
-        // Save the user in MongoDB
+
         return userService.createUser(user);
     }
 
@@ -166,30 +166,30 @@ public class AdminController {
     @PostMapping("/register")
     @Operation(summary = "Register a new user")
     public User registerUser(@Validated @RequestBody UserForRegistrationDto userForRegistrationDto) {
-        // Check if the username is already taken
+
         if (userService.isUsernameTaken(userForRegistrationDto.getUsername())) {
             throw new RuntimeException("Error: Username is already taken!");
         }
 
-        // Convert UserDTO to User
+
         User user = new User();
         user.setUsername(userForRegistrationDto.getUsername());
         user.setName(userForRegistrationDto.getName());
         user.setLastname(userForRegistrationDto.getLastname());
         user.setEmail(userForRegistrationDto.getEmail());
 
-        // Encode the password before saving
+
         String encodedPassword = passwordEncoder.encode(userForRegistrationDto.getPassword());
         user.setPassword(encodedPassword);
 
-        // Fetch the default role ROLE_USER from MongoDB
+
         Role defaultRole = roleRepository.findByName(RoleName.ROLE_USER)
                 .orElseThrow(() -> new RuntimeException("Error: Role is not found."));
 
-        // Assign default role to the user
+
         user.setRole(defaultRole);
 
-        // Save the user in MongoDB
+
         return userService.createUser(user);
     }
 

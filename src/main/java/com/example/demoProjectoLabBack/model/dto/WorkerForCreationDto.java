@@ -29,7 +29,7 @@ public class WorkerForCreationDto {
 
 
 
-    // Getters and setters
+
 
 
 

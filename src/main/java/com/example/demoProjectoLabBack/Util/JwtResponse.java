@@ -4,7 +4,7 @@ public class JwtResponse {
 
     private String token;
 
-    // You can also include other fields if needed, such as expiration time or user details
+
 
     public JwtResponse(String token) {
         this.token = token;

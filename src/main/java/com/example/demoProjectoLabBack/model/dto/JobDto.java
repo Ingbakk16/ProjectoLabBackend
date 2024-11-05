@@ -7,7 +7,7 @@ public class JobDto {
     private String description;
     private String skillsRequired;
 
-    // Constructor
+
     public JobDto(String id, String title, String description, String skillsRequired) {
         this.id = id;
         this.title = title;
@@ -15,7 +15,7 @@ public class JobDto {
         this.skillsRequired = skillsRequired;
     }
 
-    // Getters and Setters
+
     public String getId() {
         return id;
     }

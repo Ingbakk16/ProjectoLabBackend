@@ -8,6 +8,7 @@ import com.example.demoProjectoLabBack.persistance.entities.User;
 import com.example.demoProjectoLabBack.persistance.entities.WorkerProfile;
 import com.example.demoProjectoLabBack.persistance.repository.RoleRepository;
 import com.example.demoProjectoLabBack.persistance.repository.UserRepository;
+import com.example.demoProjectoLabBack.persistance.repository.WorkerRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -18,6 +19,9 @@ public class UserService {
 
     @Autowired
     private UserRepository userRepository;
+
+    @Autowired
+    private WorkerRepository workerRepository;
 
     @Autowired
     private RoleRepository roleRepository;
@@ -67,46 +71,53 @@ public class UserService {
         return userRepository.findAllByRoleId(userRole.getId());
     }
 
-    public void deleteUser(String id) {
-        userRepository.deleteById(String.valueOf(id));
+    public void deleteUser(String userId) {
+
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new RuntimeException("User not found"));
+
+
+        workerRepository.deleteByUser(user);
+
+        userRepository.deleteById(String.valueOf(userId));
     }
 
     public UserDto updateUserProfile(String userId, UserDto updateData) {
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new RuntimeException("User not found with ID: " + userId));
 
-        // Update fields from updateData
+
         user.setUsername(updateData.getUsername());
         user.setName(updateData.getName());
         user.setLastname(updateData.getLastname());
         user.setEmail(updateData.getEmail());
         // Add any other fields you want to update
 
-        // Save the updated user
+
         User updatedUser = userRepository.save(user);
 
         return convertToDto(updatedUser);  // Return updated user DTO
     }
 
-    // Convert User entity to UserDto
+
     private UserDto convertToDto(User user) {
         return new UserDto(user.getId(), user.getUsername(), user.getName(), user.getLastname(), user.getEmail());
     }
 
 
     public void updateUserRole(String userId, RoleName roleName) {
-        // Fetch the user by ID from MongoDB
+
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new RuntimeException("User not found"));
 
-        // Fetch the role by its name (e.g., ROLE_WORKER)
+
         Role newRole = roleRepository.findByName(roleName)
                 .orElseThrow(() -> new RuntimeException("Error: Role is not found."));
 
-        // Set the new role for the user
+
         user.setRole(newRole);
 
-        // Save the updated user in MongoDB
+
         userRepository.save(user);
     }
 

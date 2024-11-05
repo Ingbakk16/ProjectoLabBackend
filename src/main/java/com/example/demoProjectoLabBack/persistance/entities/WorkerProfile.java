@@ -47,7 +47,7 @@ public class WorkerProfile {
     private List<Rating> comments = new ArrayList<>();
 
 
-    // Getters and setters
+
     public String getId() {
         return id;
     }
@@ -153,7 +153,7 @@ public class WorkerProfile {
     public void setRatings(List<Integer> comments) {
     }
 
-    // Add rating method to append new ratings and calculate the average
+
     public void addRating(Rating rating) {
         this.comments.add(rating);
         this.ratings.add(rating.getRating());

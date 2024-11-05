@@ -18,7 +18,7 @@ public class JwtUserDetails implements UserDetails {
     private String email;
     private Role role;
 
-    // Constructor
+
     public JwtUserDetails(String id, String username, String password, String name,
                           String lastname, String email, Role role) {
         this.id = id;
@@ -30,7 +30,7 @@ public class JwtUserDetails implements UserDetails {
         this.role = role;
     }
 
-    // Additional Getters
+
     public String getId() {
         return id;
     }
@@ -58,7 +58,7 @@ public class JwtUserDetails implements UserDetails {
             throw new IllegalStateException("User role is not set");
         }
 
-        // Convert the role into a SimpleGrantedAuthority for Spring Security
+
         return Collections.singletonList(new SimpleGrantedAuthority(role.getName().name()));
     }
 
@@ -74,25 +74,25 @@ public class JwtUserDetails implements UserDetails {
 
     @Override
     public boolean isAccountNonExpired() {
-        // Customize based on your requirements (e.g., add an expiration date field)
+
         return true;
     }
 
     @Override
     public boolean isAccountNonLocked() {
-        // Customize based on your requirements (e.g., add a field for account lock status)
+
         return true;
     }
 
     @Override
     public boolean isCredentialsNonExpired() {
-        // Customize based on your requirements (e.g., add password expiration logic)
+
         return true;
     }
 
     @Override
     public boolean isEnabled() {
-        // Customize based on your requirements (e.g., add an "enabled" field)
+
         return true;
     }
 }

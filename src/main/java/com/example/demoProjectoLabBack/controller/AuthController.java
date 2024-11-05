@@ -36,24 +36,24 @@ public class AuthController {
     @PostMapping("/login")
     public ResponseEntity<?> login(@RequestBody LoginRequestDto loginRequest) {
         try {
-            // Authenticate the user
+
             Authentication authentication = authenticationManager.authenticate(
                     new UsernamePasswordAuthenticationToken(loginRequest.getUsername(), loginRequest.getPassword())
             );
 
-            // Set the authentication object in the context
+
             SecurityContextHolder.getContext().setAuthentication(authentication);
 
-            // Cast to get the JwtUserDetails object
+
             JwtUserDetails userDetails = (JwtUserDetails) authentication.getPrincipal();
 
-            // Get the userId from JwtUserDetails
+
             String userId = userDetails.getId();
 
-            // Generate JWT token including userId
+
             String jwt = jwtUtil.generateToken(userDetails, userId);
 
-            // Return the JWT response
+
             return ResponseEntity.ok(new JwtResponse(jwt));
 
         } catch (BadCredentialsException e) {

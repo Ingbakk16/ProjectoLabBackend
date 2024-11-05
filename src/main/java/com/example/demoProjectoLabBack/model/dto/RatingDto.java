@@ -42,11 +42,5 @@ public class RatingDto {
         this.comment = comment;
     }
 
-    //public String getRatedByUserId() {
-       // return ratedByUserId;
-   // }
 
-   // public void setRatedByUserId(String ratedByUserId) {
-       // this.ratedByUserId = ratedByUserId;
-    //}
 }

@@ -19,15 +19,15 @@ public class CustomUserDetailsService implements UserDetailsService {
 
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-        // Query the database and handle the Optional
-        Optional<User> optionalUser = userRepository.findByUsername(username); // This returns Optional<User>
 
-        // Check if the user is present
+        Optional<User> optionalUser = userRepository.findByUsername(username);
+
+
         if (!optionalUser.isPresent()) {
             throw new UsernameNotFoundException("User not found");
         }
 
-        User user = optionalUser.get(); // Get the User object from the Optional
+        User user = optionalUser.get();
         return new JwtUserDetails(user.getId(), user.getUsername(), user.getPassword(), user.getName(), user.getLastname(), user.getEmail(), user.getRole());
     }
 }

@@ -87,16 +87,16 @@ public class WorkerService {
             return Collections.emptyList();
         }
 
-        // Map to WorkerProfileDto to filter only necessary fields
+
         return profiles.stream()
-                .map(this::convertToDto)  // Using the same convertToDto as in findAllWorkers
+                .map(this::convertToDto)
                 .collect(Collectors.toList());
     }
 
     public List<WorkerProfileDto> findAllWorkers() {
         List<WorkerProfile> workers = workerRepository.findAll();
         if (workers == null || workers.isEmpty()) {
-            // Log or handle the case where no workers are found
+
             return Collections.emptyList();
         }
         return workers.stream()
@@ -110,7 +110,7 @@ public class WorkerService {
         WorkerProfile workerProfile = workerRepository.findByUserId(userId)
                 .orElseThrow(() -> new RuntimeException("Worker profile not found for user ID: " + userId));
 
-        // Convert WorkerProfile to WorkerProfileDto (assuming you have a conversion method)
+
         return convertToDto(workerProfile);
     }
 
@@ -144,7 +144,7 @@ public class WorkerService {
 
     public List<WorkerProfileDto> convertWorkersToDto(List<WorkerProfile> workers) {
         return workers.stream()
-                .map(this::convertToDto)  // Calls the private `convertToDto` method for each worker
+                .map(this::convertToDto)
                 .collect(Collectors.toList());
     }
 
@@ -207,7 +207,7 @@ public class WorkerService {
                 ratingDto.setId(rating.getId());  // Set the rating ID
                 ratingDto.setRating(rating.getRating());
                 ratingDto.setComment(rating.getComment());
-                ratingDto.setRatedByUserId(rating.getRatedBy().getUsername());  // Optionally include the rater's username
+                ratingDto.setRatedByUserId(rating.getRatedBy().getUsername());
                 ratingDtos.add(ratingDto);
             }
 
@@ -245,16 +245,16 @@ public class WorkerService {
         WorkerProfile workerProfile = workerRepository.findByUserId(userId)
                 .orElseThrow(() -> new RuntimeException("Worker profile not found for user ID: " + userId));
 
-        // Update fields of the WorkerProfile from updateData
+
         workerProfile.setDescription(updateData.getDescription());;
         workerProfile.setDireccion(updateData.getDireccion());
         workerProfile.setPhoneNumber(updateData.getPhoneNumber());
 
 
-        // Save updated WorkerProfile
+
         WorkerProfile updatedProfile = workerRepository.save(workerProfile);
 
-        return convertToDto(updatedProfile);  // Return updated DTO
+        return convertToDto(updatedProfile);
     }
 
 
@@ -281,7 +281,7 @@ public class WorkerService {
 
 
 
-            // Save the updated profile after removal
+
             workerRepository.save(workerProfile);
         } else {
             throw new RuntimeException("Worker not found");

@@ -12,10 +12,8 @@ public class WorkerProfileDto {
 
     private String description;
 
-    @NotBlank @Max(8)
     private int dni;
 
-    @Size(min = 4, max = 32)
     private String direccion;
 
     private long phoneNumber;

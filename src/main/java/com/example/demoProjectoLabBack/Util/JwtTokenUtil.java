@@ -21,7 +21,7 @@ public class JwtTokenUtil {
         return Keys.hmacShaKeyFor(secretKey.getBytes());
     }
 
-    // Method to generate a JWT token
+
     public String generateToken(UserDetails userDetails, String userId) {
         return Jwts.builder()
                 .setSubject(userDetails.getUsername())

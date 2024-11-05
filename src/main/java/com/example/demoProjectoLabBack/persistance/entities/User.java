@@ -39,7 +39,7 @@ public class User {
     @DBRef
     private Role role;
 
-    // Getters and setters
+
     public String getId() {
         return id;
     }

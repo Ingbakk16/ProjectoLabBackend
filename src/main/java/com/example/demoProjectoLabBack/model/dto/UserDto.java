@@ -8,7 +8,7 @@ public class UserDto {
     private String lastname;
     private String email;
 
-    // Constructor
+
     public UserDto(String id, String username, String name, String lastname, String email) {
         this.id = id;
         this.username = username;
@@ -17,7 +17,7 @@ public class UserDto {
         this.email = email;
     }
 
-    // Getters and setters
+
 
 
     public String getId() {

@@ -15,6 +15,7 @@ import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
@@ -44,13 +45,13 @@ public class WorkerController {
 
 
         try {
-            // Extract userId from the token
+
             String userId = jwtUserDetails.getId();
 
-            // Create the worker profile
+
             workerService.updateUserToWorker(userId, request);
 
-            // Update the user role to ROLE_WORKER
+
             userService.updateUserRole(userId, RoleName.ROLE_WORKER);
 
             return ResponseEntity.ok("User updated to worker successfully");
@@ -77,10 +78,10 @@ public class WorkerController {
     @GetMapping("/profile")
     @Operation(summary = "Get the authenticated user's worker profile")
     public ResponseEntity<WorkerProfileDto> getWorkerProfile(@AuthenticationPrincipal JwtUserDetails jwtUserDetails) {
-        // Extract the userId from the JwtUserDetails (which holds the token claims)
+
         String userId = jwtUserDetails.getId();
 
-        // Fetch the worker profile using the extracted userId
+
         WorkerProfileDto workerProfileDto = workerService.getWorkerProfileByUserId(userId);
 
         return ResponseEntity.ok(workerProfileDto);
@@ -88,16 +89,18 @@ public class WorkerController {
 
 
 
+
+    @PreAuthorize("hasRole('WORKER')")
     @PutMapping("/edit_profile")
     @Operation(summary = "Update the authenticated user's worker profile")
     public ResponseEntity<WorkerProfileDto> updateWorkerProfile(
             @AuthenticationPrincipal JwtUserDetails jwtUserDetails,
             @RequestBody WorkerProfileForEditDto updateData) {
 
-        // Extract userId from token
+
         String userId = jwtUserDetails.getId();
 
-        // Call the service to update the worker profile
+
         WorkerProfileDto updatedProfile = workerService.updateWorkerProfile(userId, updateData);
 
         return ResponseEntity.ok(updatedProfile);
@@ -138,6 +141,7 @@ public class WorkerController {
         }
     }
 
+    @PreAuthorize("hasRole('WORKER')")
     @PostMapping("/images/add")
     public ResponseEntity<String> addImageToWorkerProfile(
             @RequestBody String imageUrl,
@@ -154,6 +158,7 @@ public class WorkerController {
     }
 
 
+    @PreAuthorize("hasRole('WORKER')")
     @DeleteMapping("/images/delete")
     public ResponseEntity<String> removeImageFromWorkerProfile(
             @RequestBody String imageUrl,

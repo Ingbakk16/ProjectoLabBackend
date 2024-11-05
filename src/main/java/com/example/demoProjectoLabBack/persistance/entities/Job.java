@@ -28,7 +28,7 @@ public class Job {
 
     private Set<String> workerProfileIds = new HashSet<>();
 
-    // Getters and setters
+
     public String getId() {
         return id;
     }

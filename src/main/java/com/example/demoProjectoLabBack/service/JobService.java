@@ -19,15 +19,15 @@ public class JobService {
     @Autowired
     private JobRepository jobRepository;
 
-    // Method to get all jobs
+
     public List<JobDto> getAllJobs() {
         List<Job> jobs = jobRepository.findAll();
         return jobs.stream()
-                .map(this::convertToDto) // Convert each Job to JobDto
+                .map(this::convertToDto)
                 .collect(Collectors.toList());
     }
 
-    // Helper method to convert Job to JobDto
+
     private JobDto convertToDto(Job job) {
         return new JobDto(
                 job.getId(),
@@ -43,15 +43,15 @@ public class JobService {
         job.setTitle(jobDto.getTitle());
         job.setDescription(jobDto.getDescription());
         job.setSkillsRequired(jobDto.getSkillsRequired());
-        return jobRepository.save(job);  // Save to MongoDB
+        return jobRepository.save(job);
     }
 
-    // Method to delete a job by ID
+
     public void deleteJob(String jobId) {
         if (!jobRepository.existsById(jobId)) {
             throw new RuntimeException("Job not found with ID: " + jobId);
         }
-        jobRepository.deleteById(jobId);  // Delete the job by ID
+        jobRepository.deleteById(jobId);
     }
 
 
