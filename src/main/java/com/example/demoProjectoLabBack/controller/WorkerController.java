@@ -63,6 +63,7 @@ public class WorkerController {
 
 
     @GetMapping("/by-job/{jobId}")
+    @Operation(summary = "Get all worker filtered by job")
     public List<WorkerProfileDto> getWorkerProfilesByJobId(@PathVariable String jobId) {
         return workerService.getWorkerProfilesByJobId(jobId);
     }
@@ -143,6 +144,7 @@ public class WorkerController {
 
     @PreAuthorize("hasRole('WORKER')")
     @PostMapping("/images/add")
+    @Operation(summary = "Add an image to the images list")
     public ResponseEntity<String> addImageToWorkerProfile(
             @RequestBody String imageUrl,
             @AuthenticationPrincipal JwtUserDetails jwtUserDetails) {
@@ -160,6 +162,7 @@ public class WorkerController {
 
     @PreAuthorize("hasRole('WORKER')")
     @DeleteMapping("/images/delete")
+    @Operation(summary = "Delete an image from the images list")
     public ResponseEntity<String> removeImageFromWorkerProfile(
             @RequestBody String imageUrl,
             @AuthenticationPrincipal JwtUserDetails jwtUserDetails
